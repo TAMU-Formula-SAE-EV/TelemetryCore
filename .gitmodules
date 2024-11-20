@@ -1,0 +1,3 @@
+[submodule "lib/cpputil"]
+	path = lib/cpputil
+	url = https://github.com/Juicestus/cpputil.git
