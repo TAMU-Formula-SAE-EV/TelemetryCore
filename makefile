@@ -5,6 +5,7 @@ TARGET_EXEC ?= telemetrycore
 BUILD_DIR ?= ./bin
 SRC_DIRS ?= ./src ./lib
 
+C_V ?= 17
 CPP_V ?= 20
 
 SRCS := $(shell find $(SRC_DIRS) -name *.cc -or -name *.c -or -name *.s)
@@ -14,6 +15,7 @@ DEPS := $(OBJS:.o=.d)
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
+CFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c$(C_V) -g -O3 -Wno-format-security -Wall -Wextra -pedantic-errors -Weffc++ -Wno-unused-parameter
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c++$(CPP_V) -g -O3 -Wno-format-security -Wall -Wextra -pedantic-errors -Weffc++ -Wno-unused-parameter 
 
 ifeq ($(UNAME),MINGW64_NT-10.0-19043)
@@ -37,7 +39,7 @@ $(BUILD_DIR)/%.s.o: %.s
 # c source
 $(BUILD_DIR)/%.c.o: %.c
 	$(MKDIR_P) $(dir $@)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # c++ source
 $(BUILD_DIR)/%.cc.o: %.cc

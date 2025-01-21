@@ -11,6 +11,7 @@
 #include <functional>
 
 #include "../lib/cpputil/utils.h"
+#include "packet.h"
 
 // Define packet structure for client->server communication
 typedef std::function<void(std::string, std::string)> PacketCallback;
@@ -32,6 +33,8 @@ public:
 
     void TransmitFrame(const char* header_buffer, size_t header_len,
         const char* content_buffer, size_t content_len);
+
+    void TransmitFrame(Packet packet);
 
 private:
     static const int BUFFER_SIZE = 2048;

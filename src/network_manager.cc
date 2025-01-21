@@ -121,14 +121,19 @@ void NetworkManager::HandlePacket(char* buffer, int start, size_t len) {
     _on_receive(cmd, data);
 }
 
- void NetworkManager::TransmitFrame(const std::string& header, const std::string& content) {
+void NetworkManager::TransmitFrame(const std::string& header, const std::string& content) {
     TransmitFrame(header.c_str(), header.size(), content.c_str(), content.size());
+}
+
+void NetworkManager::TransmitFrame(Packet packet) {
+    TransmitFrame((char*)packet.header, packet.header_len, (char*)packet.content, packet.content_len);
 }
 
 void NetworkManager::TransmitFrame(const char* header_buffer, size_t header_len, const char* content_buffer, size_t content_len) {
     char buffer[BUFFER_SIZE] = {0};
     buffer[0] = '[';
     memcpy(buffer, header_buffer, header_len);
+
     buffer[header_len] = ']';
     memcpy(buffer + header_len + 1, content_buffer, content_len);
     buffer[header_len + content_len + 1] = ';';
