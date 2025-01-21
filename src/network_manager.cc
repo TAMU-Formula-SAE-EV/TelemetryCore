@@ -1,6 +1,5 @@
 #include "network_manager.h"
 
-
 bool NetworkManager::Start(int port, PacketCallback packet_cb) {
     FD_ZERO(&_fds);
 
@@ -171,4 +170,3 @@ void NetworkManager::Close() {
 
     _server_thread.join();
 }
-

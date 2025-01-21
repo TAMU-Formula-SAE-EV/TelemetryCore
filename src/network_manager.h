@@ -8,16 +8,16 @@
 #include <sys/socket.h>
 #include <thread>
 #include <unistd.h>
+#include <functional>
 
 #include "../lib/cpputil/utils.h"
 
 // Define packet structure for client->server communication
 typedef std::function<void(std::string, std::string)> PacketCallback;
 
-
 /**
  * NetworkManager -- manages send/receive for custom TCP protocol
- * 
+ *
  */
 class NetworkManager {
 public:
@@ -25,12 +25,12 @@ public:
     ~NetworkManager() { Close(); };
 
     bool Start(int port, PacketCallback packetCallback);
-   
+
     void Close();
 
     void TransmitFrame(const std::string& header, const std::string& content);
 
-    void TransmitFrame(const char* header_buffer, size_t header_len, 
+    void TransmitFrame(const char* header_buffer, size_t header_len,
         const char* content_buffer, size_t content_len);
 
 private:
