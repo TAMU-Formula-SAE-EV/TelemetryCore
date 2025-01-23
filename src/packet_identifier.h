@@ -19,57 +19,21 @@ struct CANPacket {      // 96 bit width
         std::copy(data, data+8, this->data);
     }
 
-    bool operator==(CANPacket& other) {
-        if (&other == this) return true;
-        if (other.id != id) return false;
-        for (int i = 0; i < 8; i++)
-            if (other.data[i] != data[i]) 
-                return false;
-        return true;
-    }
+    bool operator==(CANPacket& other);
 
     // delim + 12 bytes + delim = 14 bytes
     // mostly for debugging
-    void EmplaceFrame(uint8_t* p) { 
-        *p = DELIM;
-        // memcpy(p+1, &id, 4);
-        std::copy(&id, &id+4, p+1);
-        std::copy(data, data+8, p+5);
-        *(p+13) = DELIM;
-    }
+    void EmplaceFrame(uint8_t* p);
 
-    std::string Str() {
-        std::string d = Utils::StrFmt("CANPacket{ id=%b data={ ", id);
-        for (int i = 0; i < 8; i++)
-            d += Utils::StrFmt("%x ", data[i]);
-        return d + "} }";
-    }
+    std::string Str();
 }; 
 
-std::vector<CANPacket> IdentifyPackets(uint8_t* buffer, size_t size) {
-    std::vector<CANPacket> packets{};
-    CANPacket current{};
-    // actual gay shit w/ the *pointer parsing
-    for (uint8_t* end = buffer + size, *p = buffer; p < end; ) {
+class PacketIdentifier {
+public:
+    // think about optimizations to this return type 
+    std::vector<CANPacket> IdentifyPackets(uint8_t* buffer, size_t size);
+};
 
-        if (*(p++) == DELIM) {
-            for (int i = 24; i >= 0; i -= 8) {
-                current.id |= *(p++) << i;
-            }
-            for (int i = 0; i < 8; i++) {
-                current.data[i] = *(p++);
-            }
-            if (*(p++) == DELIM) {
-                packets.push_back(current);
-            } else {
-                // some error condition
-            }
-        } else {
-            // another error condition
-        }
-    }
-    return packets;
-}
-
+void TestPacketIdentifier(const PacketIdentifier& identifier);
 
 #endif
