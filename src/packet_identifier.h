@@ -34,6 +34,6 @@ public:
     std::vector<CANPacket> IdentifyPackets(uint8_t* buffer, size_t size);
 };
 
-void TestPacketIdentifier(const PacketIdentifier& identifier);
+void TestPacketIdentifier(PacketIdentifier& identifier);
 
 #endif
