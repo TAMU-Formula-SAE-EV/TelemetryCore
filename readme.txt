@@ -1,6 +1,6 @@
 TelemetryCore
 =============
 
-Texas A&M Formula SAE, Cor Telemetry Package
+Texas A&M Formula SAE, Core Telemetry Package.
 
-Designed to compile w/ GCC
+Questions: contact Justus <jus@justusl.com>

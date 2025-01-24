@@ -1,14 +1,20 @@
 #include <random>
 #include "network_manager.h"
 #include "packet_identifier.h"
+#include "packet_mapper.h"
 #include "../lib/cpputil/utils.h"
 
 static const int RATE = 100;
 
 int main(int argc, char** argv)
 {
-    PacketIdentifier identifier{};
-    TestPacketIdentifier(identifier);
+    // PacketIdentifier identifier{};
+    // TestPacketIdentifier(identifier);
+
+    PacketMapper mapper{};
+    TestPacketMapper(mapper);
+
+
 
     // std::random_device rd; 
     // std::mt19937 gen(rd()); 
