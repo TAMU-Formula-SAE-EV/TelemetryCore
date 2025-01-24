@@ -213,15 +213,37 @@ PacketMapper::PacketMapper()
 
 
 void TestPacketMapper(PacketMapper& mapper) {
+
+/* Designed to test the following config file:
+
+0xf5ae {
+    velocity = 1:4,
+    acceleration = 5:8 
+}
+
+0b 1111 1111 {
+    voltage = 1:8 / 1000
+}
+
+*/
+
     uint8_t a[8] = {0};
     int32_t velo = 75080350; 
     memcpy(a, &velo, 4);
     int32_t accel = -650290;
     memcpy(a+4, &accel, 4);
-    CANPacket packet(0xF5AE, a);
-    std::cout << "\nTesting parsing of packet: " << packet.Str() << "\n";
+    CANPacket packet1(0xF5AE, a);
 
+    uint8_t b[8] = {0};
+    double voltage = 48.312;
+    uint64_t ivoltage = (uint64_t)(voltage * 1000);
+    memcpy(b, &ivoltage, 8);
+    CANPacket packet2(0b11111111, b);
+
+    std::cout << "\nTesting parsing of packets: \n" << packet1.Str() << "\n" << packet2.Str() << "\n";
+
+    mapper.MapPacket(packet1);
+    mapper.MapPacket(packet2);
     std::cout << "\nValues after parsing: \n";
-    mapper.MapPacket(packet);
     mapper.__dbg();
 }
