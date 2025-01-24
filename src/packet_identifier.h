@@ -6,8 +6,11 @@
 #include <iostream>
 #include "../lib/cpputil/utils.h"
 
-static const uint8_t DELIM = 0xF5;    // A99I E0F5 AE0E 1EC0
+static const uint8_t DELIM_BEGIN = 0xF5;    // A99IE F5AE E1EC
+static const uint8_t DELIM_END = 0xAE;
 
+// 1      2     3    4    5    6     7      8       9       10    11     12      13     14
+// DELIM | ID | ID | ID | ID | DATA | DATA | DATA | DATA | DATA | DATA | DATA | DATA | DELIM
 struct CANPacket {      // 96 bit width
     uint32_t id;        // 32 bit, uses 29 bit
     uint8_t data[8];    // 64 bits
@@ -30,6 +33,11 @@ struct CANPacket {      // 96 bit width
 
 class PacketIdentifier {
 public:
+    size_t leftover_size;
+    uint8_t leftover[13];
+
+    PacketIdentifier() : leftover_size(0) { memset(leftover, 0, 8); }
+    
     // think about optimizations to this return type 
     std::vector<CANPacket> IdentifyPackets(uint8_t* buffer, size_t size);
 };

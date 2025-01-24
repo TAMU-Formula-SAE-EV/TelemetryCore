@@ -12,11 +12,11 @@ bool CANPacket::operator==(CANPacket& other)
 
 void CANPacket::EmplaceFrame(uint8_t* p)
 { 
-    *p = DELIM;
+    *p = DELIM_BEGIN;
     memcpy(p+1, &id, 4);
     // std::copy(&id, &id+4, p+1);
     std::copy(data, data+8, p+5);
-    *(p+13) = DELIM;
+    *(p+13) = DELIM_END;
 }
 
 std::string CANPacket::Str()
@@ -30,19 +30,35 @@ std::string CANPacket::Str()
 
 std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t size) 
 {
+    // handle the leftovers from the previous buffer
+    if (leftover_size > 0) {
+        int new_size = leftover_size + size;
+        uint8_t* bigger_buf = new uint8_t[new_size]{0};
+        std::copy(leftover, leftover + leftover_size, bigger_buf);
+        std::copy(buffer, buffer + size, bigger_buf + leftover_size);
+        // for (int i = 0; i < new_size; i++) printf("%2x ", bigger_buf[i]);
+        // std::cout << "\n";
+        buffer = bigger_buf;
+        size = new_size;
+        leftover_size = 0;
+    }
+
     std::vector<CANPacket> packets{};
     CANPacket current{};
-    uint8_t* last_start; // unused for now -- will use it
+    // uint8_t* start = nullptr;
     // actual gay shit w/ the *pointer parsing
     for (uint8_t* end = buffer + size, *p = buffer; p < end; ) {
-        if (*(p++) == DELIM) {
+        uint8_t* start = p;
+        if (*(p++) == DELIM_BEGIN) {
             for (int i = 0; i <= 24 && p < end; i += 8) {
                 current.id |= *(p++) << i;
             }
             for (int i = 0; i < 8 && p < end; i++) {
                 current.data[i] = *(p++);
             }
-            if (p != end && *(p++) == DELIM) {
+            // printf("p = %x end = %x\n", p, end);
+            // printf("next = %x current = %s\n", *p, current.Str().c_str());
+            if (p != end && *(p++) == DELIM_END) {
                 packets.push_back(current);
                 current.id = 0;
                 memset(current.data, 0, 8);
@@ -57,7 +73,14 @@ std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t
                 // a packet was split, so we can save this
                 // half of the packet and then try to
                 // recover it 
-                std::cout << "WTF!\n\n";
+                if (p == end) { // we hit the end
+                    // how many leftover bytes do we have
+                    this->leftover_size = end - start;
+                    // and lets copy those over into our leftover buffer
+                    std::copy(start, end, this->leftover);
+                } else {
+                    std::cout << "WTF!\n\n";
+                }
             }
         } else {
             // another error condition
@@ -104,7 +127,15 @@ void TestPacketIdentifier(PacketIdentifier& identifier)
     std::cout << "\n";
 
     std::vector<CANPacket> detected = identifier.IdentifyPackets(buff1, sizeof(buff1));
+    for (CANPacket packet : detected) {
+        std::cout << packet.Str() << "\n";
+    }
 
+    std::cout << "leftover_size=" << identifier.leftover_size << " leftover={ ";
+    for (int i = 0; i < sizeof(identifier.leftover); i++) printf("%2x ", identifier.leftover[i]);
+    std::cout << " } \n";
+
+    detected = identifier.IdentifyPackets(buff2, sizeof(buff2));
     for (CANPacket packet : detected) {
         std::cout << packet.Str() << "\n";
     }
