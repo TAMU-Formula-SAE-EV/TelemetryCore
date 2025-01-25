@@ -56,6 +56,18 @@
         "algorithm": "cpp",
         "rs232.h": "c",
         "serialosx.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "type_traits": "cpp",
+        "any": "cpp",
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "csignal": "cpp",
+        "deque": "cpp",
+        "future": "cpp",
+        "list": "cpp",
+        "queue": "cpp",
+        "regex": "cpp",
+        "set": "cpp",
+        "source_location": "cpp"
     }
 }

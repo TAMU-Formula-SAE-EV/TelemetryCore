@@ -1,6 +1,6 @@
 [submodule "lib/cpputil"]
 	path = lib/cpputil
 	url = https://github.com/Juicestus/cpputil
-[submodule "lib/websocketpp"]
-	path = lib/websocketpp
-	url = https://github.com/juicestus/websocketpp
+[submodule "lib/websocket"]
+	path = lib/websocket
+	url = https://github.com/Juicestus/websocket

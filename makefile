@@ -6,7 +6,7 @@ BUILD_DIR ?= ./bin
 SRC_DIRS ?= ./src ./lib
 
 C_V ?= 17
-CPP_V ?= 20
+CPP_V ?= 17
 
 SRCS := $(shell find $(SRC_DIRS) -name *.cc -or -name *.c -or -name *.s)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)

@@ -4,6 +4,7 @@
 #include "packet_identifier.h"
 #include "packet_mapper.h"
 #include "serial_interface.h"
+#include "socket_manager.h"
 #include "../lib/cpputil/utils.h"
 
 #define VERBOSE_RECV    // send info on recv
@@ -15,14 +16,14 @@ typedef void (*sig_handler_t)(int);
 
 // collect all the subsystems, organize in convinient
 // memory base
-class Core {
+struct Core {
     // subsystems;
     PacketIdentifier identifier;
     PacketMapper mapper;
     SerialInterface serial;
+    SocketManager socket;
 
-public:
-    Core() : identifier{}, mapper{}, serial{} {}
+    Core() : identifier{}, mapper{}, serial{}, socket{} {}
     int Run(const std::string& serial_port, const std::string& cfg_file);
     sig_handler_t TermHandler(void);
 };
@@ -79,6 +80,8 @@ int main(int argc, char** argv)
 {
     Core core{};
 
+    TestSocketManager(core.socket);
+
     // Grab the TermHandler and bind it using sigaction
     struct sigaction sigIntHandler;
     sigIntHandler.sa_handler = core.TermHandler();
@@ -87,7 +90,7 @@ int main(int argc, char** argv)
     sigaction(SIGINT, &sigIntHandler, NULL);
 
     // Run telemetry with com port and config file
-    core.Run("/dev/ttys013", "test.cfg");
+    // core.Run("/dev/ttys013", "test.cfg");
 }
 
 
