@@ -32,16 +32,17 @@ struct CANPacket {      // 96 bit width
 }; 
 
 class PacketIdentifier {
-public:
     size_t leftover_size;
     uint8_t leftover[13];
 
+public:
     PacketIdentifier() : leftover_size(0) { memset(leftover, 0, 8); }
     
     // think about optimizations to this return type 
     std::vector<CANPacket> IdentifyPackets(uint8_t* buffer, size_t size);
 };
 
-void TestPacketIdentifier(PacketIdentifier& identifier);
+void TestPacketIdentifier1(PacketIdentifier& identifier);
+void TestPacketIdentifier2(PacketIdentifier& identifier);
 
 #endif

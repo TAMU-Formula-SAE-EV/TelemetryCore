@@ -24,7 +24,7 @@ std::string CANPacket::Str()
     std::string d = Utils::StrFmt("CANPacket{ id=%s data={ ", 
         std::bitset<32>(id).to_string());
     for (int i = 0; i < 8; i++)
-        d += Utils::StrFmt("%x ", data[i]);
+        d += Utils::StrFmt("%02x ", data[i]);
     return d + "} }";
 }
 
@@ -55,7 +55,7 @@ std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t
         uint8_t* start = p;
         if (*(p++) == DELIM_BEGIN) {
             for (int i = 0; i <= 24 && p < end; i += 8) {
-                current.id |= *(p++) << i;
+                current.id |= *(p++) << (24-i); // '24-' is used to hot swap endian
             }
             for (int i = 0; i < 8 && p < end; i++) {
                 current.data[i] = *(p++);
@@ -83,7 +83,9 @@ std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t
                     // and lets copy those over into our leftover buffer
                     std::copy(start, end, this->leftover);
                 } else {
-                    std::cout << "WTF!\n\n";
+                    p--;
+                    current.id = 0;
+                    memset(current.data, 0, 8);
                 }
             }
         } else {
@@ -99,7 +101,7 @@ std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t
     return packets;
 }
 
-void TestPacketIdentifier(PacketIdentifier& identifier) 
+void TestPacketIdentifier1(PacketIdentifier& identifier) 
 {
     std::vector<CANPacket> packets;
 
@@ -135,13 +137,34 @@ void TestPacketIdentifier(PacketIdentifier& identifier)
         std::cout << packet.Str() << "\n";
     }
 
-    std::cout << "leftover_size=" << identifier.leftover_size << " leftover={ ";
-    for (int i = 0; i < sizeof(identifier.leftover); i++) printf("%2x ", identifier.leftover[i]);
-    std::cout << " } \n";
+    // to log these make the fields public or smtn
+    // std::cout << "leftover_size=" << identifier.leftover_size << " leftover={ ";
+    // for (int i = 0; i < sizeof(identifier.leftover); i++) printf("%2x ", identifier.leftover[i]);
+    // std::cout << " } \n";
 
     detected = identifier.IdentifyPackets(buff2, sizeof(buff2));
     for (CANPacket packet : detected) {
         std::cout << packet.Str() << "\n";
     }
+}
 
+
+void TestPacketIdentifier2(PacketIdentifier& identifier) 
+{
+    uint8_t buffer[14 * 4] {0};
+
+    uint8_t partial[] {0xf5, 0x00, 0x00, 0x00, 0xff, 0x9d, 0x21, 0x40, 0x3c, 0xf5, 0xf7, 0xe2, 0xae};
+    memcpy(buffer+7, partial, sizeof(partial));
+
+    uint8_t good[] {0xf5, 0x00, 0x00, 0x00, 0xff, 0x7d, 0x22, 0x53, 0x6f, 0x7b, 0x89, 0xd1, 0x0c, 0xae};
+    memcpy(buffer+7+sizeof(partial), good, sizeof(good));
+
+    printf("read %d bytes: ", -1);
+    for (int i = 0; i < sizeof(buffer); i++) printf("0x%02x, ", buffer[i]);
+    std::cout << "\n\n";
+
+    std::vector<CANPacket> detected = identifier.IdentifyPackets(buffer, sizeof(buffer));
+    for (CANPacket packet : detected) {
+        std::cout << packet.Str() << "\n";
+    }
 }

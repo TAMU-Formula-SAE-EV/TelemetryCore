@@ -2,6 +2,7 @@ import pty
 import os
 import serial
 import time
+import random
 
 master, slave = pty.openpty()
 
@@ -16,24 +17,23 @@ def binary_id(s):
 
 def hex_id(s):
     return bytes.fromhex((8 - len(s)) * '0' + s)
-    
-
-ids = [
-    binary_id("11111111"),
-    hex_id("f5ae")
-]
 
 DELIM_BEGIN = b'\xf5'
 DELIM_END = b'\xae'
 
 while True:
-    # Write data to the pseudo-terminal
-    for id in ids:
-        data = os.urandom(8)
-        frame = DELIM_BEGIN + id + data + DELIM_END
-        # print(len(frame), frame)
-        os.write(master, frame)
-    time.sleep(.0001) 
+    # send velo and accel 
+    id = hex_id("f5ae")
+    velo = random.randint(2000, 4000).to_bytes(4, 'big') 
+    accel = random.randint(000, 2000).to_bytes(4, 'big') 
+    os.write(master, DELIM_BEGIN + id + velo + accel + DELIM_END)
+
+    # send voltage
+    id = binary_id("11111111")
+    volts = random.randint(12000, 24000).to_bytes(8, 'big') 
+    os.write(master, DELIM_BEGIN + id + volts + DELIM_END)
+
+
 
 os.close(master)
 os.close(slave)

@@ -180,8 +180,8 @@ std::vector<std::pair<std::string, double>> PacketMapper::MapPacket(const CANPac
         int64_t extracted = 0;
         int width = mapping.end - mapping.start;
         for (int i = mapping.start, j = 0; i <= mapping.end; i++) {
-            extracted |= packet.data[i] << (8 * (j++)); // some endian configuration 
-            // extracted |= packet.data[i] << (8 * (width - (j++))); // other endian configuration
+            // extracted |= packet.data[i] << (8 * (j++)); // some endian configuration 
+            extracted |= packet.data[i] << (8 * (width - (j++))); // other endian configuration
         }
         double adjusted = extracted / (double)mapping.coef;
         values[mapping.identifier] = adjusted;
@@ -243,6 +243,6 @@ void TestPacketMapper(PacketMapper& mapper)
 
     mapper.MapPacket(packet1);
     mapper.MapPacket(packet2);
-    std::cout << "\nValues after parsing: \n";
-    mapper.__dbg();
+    std::cout << "\n\nValues after parsing: \n";
+    mapper.PrintState();
 }

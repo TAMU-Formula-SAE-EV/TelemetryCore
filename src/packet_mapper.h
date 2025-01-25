@@ -27,7 +27,6 @@ struct PacketMapping { // encapsulates the concept: "identifier": [start, end]
 
 class PacketMapper {
     using fileiter = std::istreambuf_iterator<char>;
-public:
     // treemap is intentional, these are bounded to human 
     // ~comprehensable~ size n
     std::map<uint32_t, std::vector<PacketMapping>> mappings{};
@@ -50,7 +49,6 @@ public:
         std::cout << "[ParsingError] Reached EOF before expected\n";
         return false;
     }
-
 
     // Parses through the can_id at the beginning of a rule
     // wants hex or binary -- valid forms:
@@ -76,6 +74,8 @@ public:
 
     bool ExpectCoef(fileiter& it, fileiter end, uint64_t& coeg);
 
+public:
+
     // Parse the mapping tree from the config file at path
     bool ParseMappings(const std::string& path);
 
@@ -83,7 +83,7 @@ public:
    
     std::string Str();
 
-    inline void __dbg() { // temp
+    inline void PrintState() {
         for (const auto& [key, value] : values) {
             std::cout << key << ": " << value << "\n";
         }
