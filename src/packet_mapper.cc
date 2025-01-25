@@ -212,8 +212,8 @@ PacketMapper::PacketMapper()
 }
 
 
-void TestPacketMapper(PacketMapper& mapper) {
-
+void TestPacketMapper(PacketMapper& mapper) 
+{
 /* Designed to test the following config file:
 
 0xf5ae {
@@ -226,7 +226,6 @@ void TestPacketMapper(PacketMapper& mapper) {
 }
 
 */
-
     uint8_t a[8] = {0};
     int32_t velo = 75080350; 
     memcpy(a, &velo, 4);
