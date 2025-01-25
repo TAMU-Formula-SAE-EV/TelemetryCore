@@ -171,11 +171,10 @@ bool PacketMapper::LoadMappings(const std::string& path)
     return true;
 }
 
-std::vector<std::pair<std::string, double>> PacketMapper::MapPacket(const CANPacket& packet) 
+void PacketMapper::MapPacket(const CANPacket& packet, std::vector<std::pair<std::string, double>>& vec)
 {
-    std::vector<std::pair<std::string, double>> updated{};
     auto it = mappings.find(packet.id);
-    if (it == mappings.end()) return updated;
+    if (it == mappings.end()) return;
     for (const PacketMapping& mapping : it->second) {
         int64_t extracted = 0;
         int width = mapping.end - mapping.start;
@@ -185,9 +184,8 @@ std::vector<std::pair<std::string, double>> PacketMapper::MapPacket(const CANPac
         }
         double adjusted = extracted / (double)mapping.coef;
         values[mapping.identifier] = adjusted;
-        updated.push_back({mapping.identifier, adjusted});
+        vec.push_back({mapping.identifier, adjusted});
     }
-    return updated;
 }
 
 std::string PacketMapper::Str() {
@@ -233,8 +231,9 @@ void TestPacketMapper(PacketMapper& mapper)
 
     std::cout << "\nTesting parsing of packets: \n" << packet1.Str() << "\n" << packet2.Str() << "\n";
 
-    mapper.MapPacket(packet1);
-    mapper.MapPacket(packet2);
+    std::vector<std::pair<std::string, double>> updated{};
+    mapper.MapPacket(packet1, updated);
+    mapper.MapPacket(packet2, updated);
     std::cout << "\n\nValues after parsing: \n";
     mapper.PrintState();
 }

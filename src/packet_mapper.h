@@ -30,7 +30,6 @@ class PacketMapper {
     // treemap is intentional, these are bounded to human 
     // ~comprehensable~ size n
     std::map<uint32_t, std::vector<PacketMapping>> mappings{};
-    std::map<std::string, double> values{};
 
     inline char IterWS(fileiter& it) { // next and skip whitespace
         char n = *it++; 
@@ -75,11 +74,12 @@ class PacketMapper {
     bool ExpectCoef(fileiter& it, fileiter end, uint64_t& coeg);
 
 public:
+    std::map<std::string, double> values{};
 
     // Parse the mapping tree from the config file at path
     bool LoadMappings(const std::string& path);
 
-    std::vector<std::pair<std::string, double>> MapPacket(const CANPacket& packet);
+    void MapPacket(const CANPacket& packet, std::vector<std::pair<std::string, double>>& vec);
    
     std::string Str();
 

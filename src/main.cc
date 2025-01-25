@@ -9,6 +9,7 @@
 
 #define VERBOSE_RECV    // send info on recv
 #define VERBOSE_STATE   // send info on state update
+// #define VERBOSE_WS     // send info about ws send
 
 // this is the type of function sigaction uses
 // typedef for better ergonomics
@@ -24,18 +25,20 @@ struct Core {
     SocketManager socket;
 
     Core() : identifier{}, mapper{}, serial{}, socket{} {}
-    int Run(const std::string& serial_port, const std::string& cfg_file);
+    int Run(const std::string& serial_port, const std::string& cfg_file, uint16_t ws_port);
     sig_handler_t TermHandler(void);
 };
 
 // actual main function 
-int Core::Run(const std::string& serial_port, const std::string& cfg_file) {
-
+int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint16_t ws_port) {
+    
     if (!mapper.LoadMappings(cfg_file)) ;
     std::cout << "Parsed the following packet mappings from config:\n";
     std::cout << mapper.Str() << "\n";
 
     if (!serial.Connect(serial_port, 115200)) return -1;
+
+    socket.Start(ws_port);
 
     uint8_t buffer[14*32]{0};
     while (true) {
@@ -53,8 +56,23 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file) {
         }
 #endif
 
-        for (const CANPacket& packet : detected)
-            mapper.MapPacket(packet);
+        std::vector<std::pair<std::string, double>> updated{};
+        for (const CANPacket& packet : detected) {
+            mapper.MapPacket(packet, updated);
+        }
+
+//         for (const auto& pair : updated) {
+
+// #ifdef VERBOSE_WS
+//             std::cout << pair.first << ": " << pair.second << "\n";
+// #endif
+//             socket.TransmitUpdatedPair(pair);
+//         }
+
+//         // for (const auto& [key, value] : mapper.values) {
+//             // std::cout << key << ": " << value << "\n";
+//         //     socket.TransmitUpdatedPair({key, value});
+//         // }
 
 #ifdef VERBOSE_STATE
         std::cout << "\nstate:\n";
@@ -71,6 +89,9 @@ sig_handler_t Core::TermHandler(void)
 {
     return [](int sig) {
         printf("\n\n[Core] process ended on signal = %d\n", sig);
+
+        std::cout << "\nend state:\n";
+        // mapper.PrintState();
         exit(1); 
     };
 }
@@ -80,8 +101,6 @@ int main(int argc, char** argv)
 {
     Core core{};
 
-    TestSocketManager(core.socket);
-
     // Grab the TermHandler and bind it using sigaction
     struct sigaction sigIntHandler;
     sigIntHandler.sa_handler = core.TermHandler();
@@ -90,7 +109,7 @@ int main(int argc, char** argv)
     sigaction(SIGINT, &sigIntHandler, NULL);
 
     // Run telemetry with com port and config file
-    // core.Run("/dev/ttys013", "test.cfg");
+    core.Run("/dev/ttys023", "test.cfg", 9000);
 }
 
 
