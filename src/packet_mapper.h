@@ -77,7 +77,7 @@ class PacketMapper {
 public:
 
     // Parse the mapping tree from the config file at path
-    bool ParseMappings(const std::string& path);
+    bool LoadMappings(const std::string& path);
 
     std::vector<std::pair<std::string, double>> MapPacket(const CANPacket& packet);
    
@@ -89,7 +89,7 @@ public:
         }
     }
 
-    PacketMapper();
+    PacketMapper() {};
 };
 
 void TestPacketMapper(PacketMapper& mapper);

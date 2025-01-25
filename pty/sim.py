@@ -33,7 +33,5 @@ while True:
     volts = random.randint(12000, 24000).to_bytes(8, 'big') 
     os.write(master, DELIM_BEGIN + id + volts + DELIM_END)
 
-
-
 os.close(master)
 os.close(slave)

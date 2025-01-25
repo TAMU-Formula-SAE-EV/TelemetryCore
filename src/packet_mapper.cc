@@ -118,7 +118,7 @@ bool PacketMapper::ExpectCoef(fileiter& it, fileiter end, uint64_t& coef) {
     return BadEOF();
 }
 
-bool PacketMapper::ParseMappings(const std::string& path) 
+bool PacketMapper::LoadMappings(const std::string& path) 
 {
     std::ifstream file(path);
     if (!file) {
@@ -201,14 +201,6 @@ std::string PacketMapper::Str() {
     }
     d += "]\n";
     return d;
-}
-
-PacketMapper::PacketMapper()
-{
-    if (ParseMappings("test.cfg")) {
-        std::cout << "Parsed the following packet mappings from config:\n";
-        std::cout << Str();
-    }
 }
 
 

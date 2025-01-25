@@ -1,29 +1,44 @@
 #include <random>
-// #include "network_manager.h"
+#include <signal.h>
+
 #include "packet_identifier.h"
 #include "packet_mapper.h"
 #include "serial_interface.h"
 #include "../lib/cpputil/utils.h"
 
-static const int RATE = 100;
+#define VERBOSE_RECV    // send info on recv
+#define VERBOSE_STATE   // send info on state update
 
-#define VERBOSE_RECV
-#define VERBOSE_STATE
+// this is the type of function sigaction uses
+// typedef for better ergonomics
+typedef void (*sig_handler_t)(int);
 
-int main(int argc, char** argv)
-{
-    PacketIdentifier identifier{};
-    // TestPacketIdentifier1(identifier);
-    // TestPacketIdentifier2(identifier);
+// collect all the subsystems, organize in convinient
+// memory base
+class Core {
+    // subsystems;
+    PacketIdentifier identifier;
+    PacketMapper mapper;
+    SerialInterface serial;
 
-    PacketMapper mapper{};
-    // TestPacketMapper(mapper);
+public:
+    Core() : identifier{}, mapper{}, serial{} {}
+    int Run(const std::string& serial_port, const std::string& cfg_file);
+    sig_handler_t TermHandler(void);
+};
 
-    SerialInterface serial{"/dev/ttys021", 115200};
+// actual main function 
+int Core::Run(const std::string& serial_port, const std::string& cfg_file) {
+
+    if (!mapper.LoadMappings(cfg_file)) ;
+    std::cout << "Parsed the following packet mappings from config:\n";
+    std::cout << mapper.Str() << "\n";
+
+    if (!serial.Connect(serial_port, 115200)) return -1;
 
     uint8_t buffer[14*32]{0};
     while (true) {
-        int read = serial.Load(buffer, sizeof(buffer));
+        int read = serial.Read(buffer, sizeof(buffer));
         if (read <= 0) continue;
 
         std::vector<CANPacket> detected = identifier.IdentifyPackets(buffer, sizeof(buffer));
@@ -45,9 +60,34 @@ int main(int argc, char** argv)
         mapper.PrintState();
 #endif
     }
+}
 
+// function returns a function that is the signal handler
+// this inner function has access to all the data inside
+// core, but is free of Core::* function pointer 
+// namespacing issues
+sig_handler_t Core::TermHandler(void) 
+{
+    return [](int sig) {
+        printf("\n\n[Core] process ended on signal = %d\n", sig);
+        exit(1); 
+    };
+}
 
-    // }
+// OMG ! main function :wow:
+int main(int argc, char** argv)
+{
+    Core core{};
+
+    // Grab the TermHandler and bind it using sigaction
+    struct sigaction sigIntHandler;
+    sigIntHandler.sa_handler = core.TermHandler();
+    sigemptyset(&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
+    sigaction(SIGINT, &sigIntHandler, NULL);
+
+    // Run telemetry with com port and config file
+    core.Run("/dev/ttys013", "test.cfg");
 }
 
 

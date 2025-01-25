@@ -2,13 +2,15 @@
 
 #if defined(__APPLE__) // function definitions for apple
 
-SerialInterface::SerialInterface(const std::string& port_name, int baudrate) 
+bool SerialInterface::Connect(const std::string& port_name, int baudrate) 
 {
     if ((this->fd = serialosx_open(port_name.c_str(), baudrate)) == -1) {
         std::cout << "[SerialError] could not open serial port " << port_name << "\n";
+        return false;
     }
+    return true;
 }
-size_t SerialInterface::Load(uint8_t* buffer, size_t size)
+size_t SerialInterface::Read(uint8_t* buffer, size_t size)
 {
     return serialosx_read(fd, buffer, size);
 }
@@ -19,22 +21,23 @@ SerialInterface::~SerialInterface(void)
    
 #elif defined(WIN32) // function definitions for windows
 
-SerialInterface::SerialInterface(const std::string& port_name, int baudrate) 
+bool SerialInterface::Connect(const std::string& port_name, int baudrate) 
 {
     const char mode[] = {'8','N','1',0};
     const char* target = ("\\\\.\\" + port_name).c_str();
     for (int i = 0; i < sizeof(comports); i++) {
         if (!strcmp(comports[i], target)) {
-
             if (RS232_OpenComport(i, baudrate, mode, 0)) {
                 std::cout << "[SerialError] could not open serial port " << port_name << "\n";
+                return false;
             }
-            return;
+            return true;
         }
     }
+    return false;
     std::cout << "[SerialError] could not find serial port " << port_name << "\n";
 }
-size_t SerialInterface::Load(uint8_t* buffer, size_t size)
+size_t SerialInterface::Read(uint8_t* buffer, size_t size)
 {
     return RS232_PollComport(cport_nr, buffer, size); 
 }

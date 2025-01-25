@@ -21,10 +21,11 @@ class SerialInterface {
 #endif
 
 public:
-    //"/dev/ttys020"
-    SerialInterface(const std::string& port_name, int baudrate);
+    SerialInterface() {}
 
-    size_t Load(uint8_t* buffer, size_t size);
+    bool Connect(const std::string& port_name, int baudrate);
+
+    size_t Read(uint8_t* buffer, size_t size);
 
     ~SerialInterface(void);
 };
