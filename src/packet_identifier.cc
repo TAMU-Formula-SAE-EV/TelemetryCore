@@ -28,10 +28,13 @@ std::string CANPacket::Str()
     return d + "} }";
 }
 
+// #define HANDLE_LEFTOVER
+
 std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t size) 
 {
     // handle the leftovers from the previous buffer
     if (leftover_size > 0) {
+#ifdef HANDLE_LEFTOVER
         int new_size = leftover_size + size;
         uint8_t* bigger_buf = new uint8_t[new_size]{0};
         std::copy(leftover, leftover + leftover_size, bigger_buf);
@@ -40,6 +43,7 @@ std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t
         // std::cout << "\n";
         buffer = bigger_buf;
         size = new_size;
+#endif
         leftover_size = 0;
     }
 

@@ -54,6 +54,8 @@
         "variant": "cpp",
         "vector": "cpp",
         "algorithm": "cpp",
-        "rs232.h": "c"
+        "rs232.h": "c",
+        "serialosx.h": "c",
+        "string.h": "c"
     }
 }

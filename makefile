@@ -12,8 +12,8 @@ SRCS := $(shell find $(SRC_DIRS) -name *.cc -or -name *.c -or -name *.s)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
-INC_DIRS := $(shell find $(SRC_DIRS) -type d)
-INC_FLAGS := $(addprefix -I,$(INC_DIRS))
+INC_DIRS := $(shell find $(SRC_DIRS) -type d) 
+INC_FLAGS := $(addprefix -I,$(INC_DIRS)) 
 
 CFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c$(C_V) -g -O3 -Wno-format-security -Wall -Wextra -pedantic-errors -Weffc++ -Wno-unused-parameter
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c++$(CPP_V) -g -O3 -Wno-format-security -Wall -Wextra -pedantic-errors -Weffc++ -Wno-unused-parameter 
@@ -24,7 +24,7 @@ else
 ifeq ($(UNAME),MINGW32_NT-6.2)
 	LDFLAGS ?= -L/lib/libdl.a
 else
-	LDFLAGS ?= -ldl
+	LDFLAGS ?= -ldl 
 endif
 endif
 

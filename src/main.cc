@@ -1,44 +1,36 @@
 #include <random>
-#include "network_manager.h"
+// #include "network_manager.h"
 #include "packet_identifier.h"
 #include "packet_mapper.h"
+#include "serial_interface.h"
 #include "../lib/cpputil/utils.h"
 
 static const int RATE = 100;
 
 int main(int argc, char** argv)
 {
-    // PacketIdentifier identifier{};
+
+    PacketIdentifier identifier{};
     // TestPacketIdentifier(identifier);
 
     PacketMapper mapper{};
-    TestPacketMapper(mapper);
+    // TestPacketMapper(mapper);
+
+
+    SerialInterface serial{"/dev/ttys021", 115200};
+
+    uint8_t buffer[64]{0};
+    while (true) {
+        int read = serial.Load(buffer, sizeof(buffer));
+        if (read < 0)
+        for (int i = 0; i < read; i++) 
+            printf("%2x ", buffer[i]);
+        std::cout << "\n\n";
 
 
 
-    // std::random_device rd; 
-    // std::mt19937 gen(rd()); 
-    // std::uniform_int_distribution<> dist(1000, 9999); 
 
-    // NetworkManager nm("TestServer");
-    // nm.Start(8080, [](std::string header, std::string content) {
-    //     Utils::LogFmt("Main[] Packet received %s %s", header, content);
-    // });
-
-    // int i = 0;
-    // do {
-    //     auto start_time = std::chrono::high_resolution_clock::now();
-        
-    //     std::string some_data = Utils::StrFmt("%d %d %d", Utils::TimeMS() & 0xFFFF, (i++), dist(gen));
-    //     if (i > 100) i = 0;
-    //     nm.TransmitFrame("update", some_data);
-
-    //     auto dt = Utils::ScheduleRate(RATE, start_time);
-    //     if (dt > 1.0 / RATE) {
-    //         Utils::LogFmt("Main[] Scheduled update overran by %f s", dt);
-    //     }
-    // } while (true);
-    // return 0;
+    }
 }
 
 
