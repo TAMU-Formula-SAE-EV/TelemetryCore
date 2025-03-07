@@ -83,6 +83,8 @@ public:
    
     std::string Str();
 
+    void LogState(std::ofstream& file);
+
     inline void PrintState() {
         for (const auto& [key, value] : values) {
             std::cout << key << ": " << value << "\n";

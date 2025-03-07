@@ -25,7 +25,8 @@ std::string CANPacket::Str()
         std::bitset<32>(id).to_string());
     for (int i = 0; i < 8; i++)
         d += Utils::StrFmt("%02x ", data[i]);
-    return d + "} }";
+    d += Utils::StrFmt("} timestamp=%d", timestamp);
+    return d + " }";
 }
 
 // #define HANDLE_LEFTOVER
@@ -63,6 +64,7 @@ std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t
             // printf("p = %x end = %x\n", p, end);
             // printf("next = %x current = %s\n", *p, current.Str().c_str());
             if (p != end && *(p++) == DELIM_END) {
+                current.Timestamp();
                 packets.push_back(current);
                 current.id = 0;
                 memset(current.data, 0, 8);

@@ -11,15 +11,17 @@ static const uint8_t DELIM_END = 0xAE;
 
 // 1      2     3    4    5    6     7      8       9       10    11     12      13     14
 // DELIM | ID | ID | ID | ID | DATA | DATA | DATA | DATA | DATA | DATA | DATA | DATA | DELIM
-struct CANPacket {      // 96 bit width
+struct CANPacket {      // 128 bit width
     uint32_t id;        // 32 bit, uses 29 bit
     uint8_t data[8];    // 64 bits
+    uint32_t timestamp; // 32 bits
 
-    CANPacket() : id(0) { memset(data, 0, 8); }
+    CANPacket() : id(0), timestamp(0) { memset(data, 0, 8); }
 
     CANPacket(uint32_t id, uint8_t* data) : id(id) {
         // memcpy(this->data, data, 8);
         std::copy(data, data+8, this->data);
+        Timestamp();
     }
 
     bool operator==(CANPacket& other);
@@ -27,6 +29,8 @@ struct CANPacket {      // 96 bit width
     // delim + 12 bytes + delim = 14 bytes
     // mostly for debugging
     void EmplaceFrame(uint8_t* p);
+
+    inline void Timestamp() { timestamp = Utils::PreciseTime<uint32_t, Utils::t_ms>(); }
 
     std::string Str();
 }; 

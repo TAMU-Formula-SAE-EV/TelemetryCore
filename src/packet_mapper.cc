@@ -188,7 +188,8 @@ void PacketMapper::MapPacket(const CANPacket& packet, std::vector<std::pair<std:
     }
 }
 
-std::string PacketMapper::Str() {
+std::string PacketMapper::Str() 
+{
     std::string d = "[\n";
     for (const auto& [can_id, submappings] : mappings) {
         d += Utils::StrFmt("  Mapping{ can_id=%04x submappings={\n", can_id);
@@ -199,6 +200,14 @@ std::string PacketMapper::Str() {
     }
     d += "]\n";
     return d;
+}
+
+void PacketMapper::LogState(std::ofstream& file) 
+{
+    file << "@" << Utils::PreciseTime<uint64_t, Utils::t_ms>() << "\n";
+    for (const auto& [key, value] : values) {
+        file << key << "=" << value << "\n";
+    }
 }
 
 
@@ -237,3 +246,4 @@ void TestPacketMapper(PacketMapper& mapper)
     std::cout << "\n\nValues after parsing: \n";
     mapper.PrintState();
 }
+

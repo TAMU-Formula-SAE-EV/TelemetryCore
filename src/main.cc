@@ -7,7 +7,7 @@
 #include "socket_manager.h"
 #include "../lib/cpputil/utils.h"
 
-#define VERBOSE_RECV    // send info on recv
+//#define VERBOSE_RECV    // send info on recv
 #define VERBOSE_STATE   // send info on state update
 // #define VERBOSE_WS     // send info about ws send
 
@@ -23,8 +23,11 @@ struct Core {
     PacketMapper mapper;
     SerialInterface serial;
     SocketManager socket;
+    std::ofstream log;
 
-    Core() : identifier{}, mapper{}, serial{}, socket{} {}
+    Core() : identifier{}, mapper{}, serial{}, socket{} {
+        log = std::ofstream("db.txt", std::ios::app);
+    }
     int Run(const std::string& serial_port, const std::string& cfg_file, uint16_t ws_port);
     sig_handler_t TermHandler(void);
 };
@@ -74,6 +77,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
 //         //     socket.TransmitUpdatedPair({key, value});
 //         // }
 
+        mapper.LogState(log);
 #ifdef VERBOSE_STATE
         std::cout << "\nstate:\n";
         mapper.PrintState();
@@ -109,7 +113,7 @@ int main(int argc, char** argv)
     sigaction(SIGINT, &sigIntHandler, NULL);
 
     // Run telemetry with com port and config file
-    core.Run("/dev/ttys023", "test.cfg", 9000);
+    core.Run("/dev/ttys045", "test.cfg", 9000);
 }
 
 
