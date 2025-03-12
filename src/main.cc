@@ -5,6 +5,7 @@
 #include "packet_mapper.h"
 #include "serial_interface.h"
 #include "socket_manager.h"
+#include "log_loader.h"
 #include "../lib/cpputil/utils.h"
 
 //#define VERBOSE_RECV    // send info on recv
@@ -103,17 +104,24 @@ sig_handler_t Core::TermHandler(void)
 // OMG ! main function :wow:
 int main(int argc, char** argv)
 {
-    Core core{};
+    // Core core{};
 
-    // Grab the TermHandler and bind it using sigaction
-    struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = core.TermHandler();
-    sigemptyset(&sigIntHandler.sa_mask);
-    sigIntHandler.sa_flags = 0;
-    sigaction(SIGINT, &sigIntHandler, NULL);
+    // // Grab the TermHandler and bind it using sigaction
+    // struct sigaction sigIntHandler;
+    // sigIntHandler.sa_handler = core.TermHandler();
+    // sigemptyset(&sigIntHandler.sa_mask);
+    // sigIntHandler.sa_flags = 0;
+    // sigaction(SIGINT, &sigIntHandler, NULL);
 
-    // Run telemetry with com port and config file
-    core.Run("/dev/ttys045", "test.cfg", 9000);
+    // // Run telemetry with com port and config file
+    // core.Run("/dev/ttys045", "test.cfg", 9000);
+
+    auto k = LogLoader("db.txt");
+    auto e = k.Lookup(4557574499);
+    for (const auto& [key, value] : e) {
+        std::cout << "-> " << key << ": " << value << "\n";
+    }
+
 }
 
 
