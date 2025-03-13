@@ -6,6 +6,7 @@
 #include "serial_interface.h"
 #include "socket_manager.h"
 #include "log_loader.h"
+#include "http_handle.h"
 #include "../lib/cpputil/utils.h"
 
 //#define VERBOSE_RECV    // send info on recv
@@ -36,7 +37,7 @@ struct Core {
 // actual main function 
 int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint16_t ws_port) {
     
-    if (!mapper.LoadMappings(cfg_file)) ;
+    if (!mapper.LoadMappings(cfg_file)) {};
     std::cout << "Parsed the following packet mappings from config:\n";
     std::cout << mapper.Str() << "\n";
 
@@ -116,11 +117,8 @@ int main(int argc, char** argv)
     // // Run telemetry with com port and config file
     // core.Run("/dev/ttys045", "test.cfg", 9000);
 
-    auto k = LogLoader("db.txt");
-    auto e = k.Lookup(4557574499);
-    for (const auto& [key, value] : e) {
-        std::cout << "-> " << key << ": " << value << "\n";
-    }
+    TestHTTPHandle();
+    std::cout << "Bad!\n" ;
 
 }
 

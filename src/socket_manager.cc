@@ -27,8 +27,6 @@ void TestSocketManager(SocketManager& socket)
 {
     socket.Start(9002);
 
-    
-
     std::pair<std::string, double> pair{"update", 0};
     for (int i = 1; true; i++) {
         if (i % 1000 == 0) i = 1;
