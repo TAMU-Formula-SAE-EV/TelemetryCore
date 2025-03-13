@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script defer>
+
+        const entries = {};
+
+        const socket = new WebSocket('ws://0.0.0.0:9003/');
+
+        socket.addEventListener('open', function(event) {
+            console.log('Connected to server');
+            $('#status').text('Connected');
+        });
+
+        socket.addEventListener('message', function(event) {
+            console.log('Message from server ', event.data);
+
+            const halfs = event.data.split(':');
+            const key = halfs[0];
+            const value = halfs[1];
+            entries[key] = value;
+        });
+
+        setInterval(() => {
+            $('#entries').empty();
+            for (const [key, value] of Object.entries(entries)) {
+                $('#entries').append(`<tr><td>${key}</td><td>${value}</td></tr>`);
+            }
+        }, 50);
+
+    </script>
+</head>
+
+<body>
+    <h1>Status: <i id="status">N/A</i></h1>
+    <table>
+        <hr>
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+        <tbody id="entries">
+        </tbody> 
+    </table>
+</body>
+
+</html>
