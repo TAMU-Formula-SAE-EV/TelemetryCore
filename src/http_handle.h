@@ -9,20 +9,23 @@
 #include "../lib/httplib/httplib.h"
 
 class HTTPHandle {
-
     httplib::Server server{};
     std::thread* thread;
+    uint16_t port{0};
 
 public:
     inline HTTPHandle() {
-        server.Get("/", [](const httplib::Request& req, httplib::Response& res) {
-            res.set_content("Hello World!", "text/plain");
-        });
+        server.set_base_dir("assets");
+
+        // server.Get("/", [](const httplib::Request& req, httplib::Response& res) {
+            // res.set_content("Hello World!", "text/plain");
+        // });
     }
 
-    inline void StartAsync() 
+    inline void StartAsync(uint16_t port) 
     {
-        thread = new std::thread([&]() { server.listen("localhost", 9000); }); 
+        this->port = port;
+        thread = new std::thread([&]() { server.listen("localhost", this->port); }); 
     }
 
     inline ~HTTPHandle() {
@@ -34,10 +37,9 @@ public:
     }
 };
 
-
 void TestHTTPHandle() {
     HTTPHandle handle{};
-    handle.StartAsync();
+    handle.StartAsync(9000);
 
     for (int i = 0; true; i++) {
         if (i > 1000) {

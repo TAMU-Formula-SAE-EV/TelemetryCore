@@ -68,6 +68,8 @@
         "queue": "cpp",
         "regex": "cpp",
         "set": "cpp",
-        "source_location": "cpp"
+        "source_location": "cpp",
+        "filesystem": "cpp",
+        "unordered_set": "cpp"
     }
 }
