@@ -9,9 +9,11 @@
 #include "http_handle.h"
 #include "../lib/cpputil/utils.h"
 
-//#define VERBOSE_RECV    // send info on recv
-// #define VERBOSE_STATE   // send info on state update
-// #define VERBOSE_WS     // send info about ws send
+//#define VERBOSE_RECV      // send info on recv
+// #define VERBOSE_STATE    // send info on state update
+// #define VERBOSE_WS       // send info about ws send
+#define STATEFULL_WS        // collect frames in a map and send 
+                            // all updates at once
 
 // this is the type of function sigaction uses
 // typedef for better ergonomics
@@ -41,10 +43,15 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
     std::cout << "Parsed the following packet mappings from config:\n";
     std::cout << mapper.Str() << "\n";
 
-    if (!serial.Connect(serial_port, 115200)) return -1;
+    if (!serial.Connect(serial_port, 1152000)) return -1;    // pretty fast baudrate
+                                                            // 115200 baud = 14.4 KB/s ~= 14 KB/s
+                                                            // (14 KB/s) / (14 B/frame) = 1000 frames/s
+
+    http.RegisterDatastreams(mapper.GetMappings());
 
     http.StartAsync(http_port);
     socket.Start(ws_port);
+
 
     uint8_t buffer[14*32]{0};
 
@@ -52,10 +59,8 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
     while (true) {
         // super-fast scheduler
         uint64_t t_now = Utils::PreciseTime<int64_t, Utils::t_us>();
-        if (t_now - t_mount < 1000) continue;
+        if (t_now - t_mount < 1000) continue;       // use an epsilon oops
         t_mount = t_now;
-
-
 
         int read = serial.Read(buffer, sizeof(buffer));
         if (read <= 0) continue;
@@ -78,17 +83,21 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
             mapper.MapPacket(packet, updated);
         }
 
+#ifndef STATEFULL_WS
         for (const auto& pair : updated) {
 #ifdef VERBOSE_WS
             std::cout << pair.first << ": " << pair.second << "\n";
 #endif
             socket.TransmitUpdatedPair(pair);
         }
-
-//         // for (const auto& [key, value] : mapper.values) {
-//             // std::cout << key << ": " << value << "\n";
-//         //     socket.TransmitUpdatedPair({key, value});
-//         // }
+#else
+        for (const auto& [key, value] : mapper.values) {
+#ifdef VERBOSE_WS
+            std::cout << key << ": " << value << "\n";
+#endif
+            socket.TransmitUpdatedPair({key, value});
+        }
+#endif
 
         mapper.LogState(log);
 #ifdef VERBOSE_STATE

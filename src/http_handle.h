@@ -13,13 +13,15 @@ class HTTPHandle {
     std::thread* thread;
     uint16_t port{0};
 
+    std::string datastreams;
+
 public:
     inline HTTPHandle() {
         server.set_base_dir("assets");
 
-        // server.Get("/", [](const httplib::Request& req, httplib::Response& res) {
-            // res.set_content("Hello World!", "text/plain");
-        // });
+        server.Get("/datastreams", [&](const httplib::Request& req, httplib::Response& res) {
+            res.set_content(this->datastreams, "text/json");
+        });
     }
 
     inline void StartAsync(uint16_t port) 
@@ -34,6 +36,17 @@ public:
             thread->join();
             delete thread;
         }
+    }
+
+    inline void RegisterDatastreams(std::map<uint32_t, std::vector<PacketMapping>> mappings) {
+        datastreams = "{\"streams\": [";
+        for (const auto& [key, value] : mappings) {
+            for (const PacketMapping& mapping : value) {
+                datastreams += Utils::StrFmt("{\"name\": \"%s\", \"units\": \"%s\", \"short_name\": \"%s\"},", mapping.identifier, "unit", mapping.identifier);
+            }
+        }
+        datastreams.pop_back();
+        datastreams += "]}";
     }
 };
 
