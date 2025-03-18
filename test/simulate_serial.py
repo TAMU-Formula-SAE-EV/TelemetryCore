@@ -1,13 +1,20 @@
-import pty
-import os
 import serial
 import time
 import random
 
-master, slave = pty.openpty()
+SERIAL_PORT = "COM10" 
 
-s_name = os.ttyname(slave)
-print("Data streaming to:", s_name)
+# Open a serial connection
+ser = serial.Serial(
+    port=SERIAL_PORT,
+    baudrate=9600,
+    bytesize=serial.EIGHTBITS,
+    parity=serial.PARITY_NONE,
+    stopbits=serial.STOPBITS_ONE,
+    timeout=1
+)
+
+print(f"Simulating serial data on {SERIAL_PORT}...")
 
 def bitstring_to_bytes(s):
     return int(s, 2).to_bytes((len(s) + 7) // 8, byteorder='big')
@@ -21,17 +28,23 @@ def hex_id(s):
 DELIM_BEGIN = b'\xf5'
 DELIM_END = b'\xae'
 
-while True:
-    # send velo and accel 
-    id = hex_id("f5ae")
-    velo = random.randint(2000, 4000).to_bytes(4, 'big') 
-    accel = random.randint(000, 2000).to_bytes(4, 'big') 
-    os.write(master, DELIM_BEGIN + id + velo + accel + DELIM_END)
+try:
+    while True:
+        # send velocity and acceleration
+        id = hex_id("f5ae")
+        velo = random.randint(2000, 4000).to_bytes(4, 'big') 
+        accel = random.randint(000, 2000).to_bytes(4, 'big') 
+        ser.write(DELIM_BEGIN + id + velo + accel + DELIM_END)
 
-    # send voltage
-    id = binary_id("11111111")
-    volts = random.randint(12000, 24000).to_bytes(8, 'big') 
-    os.write(master, DELIM_BEGIN + id + volts + DELIM_END)
+        # send voltage
+        id = binary_id("11111111")
+        volts = random.randint(12000, 24000).to_bytes(8, 'big') 
+        ser.write(DELIM_BEGIN + id + volts + DELIM_END)
 
-os.close(master)
-os.close(slave)
+        print(f"Sent data to {SERIAL_PORT}")
+
+        time.sleep(1)  # Send data every second
+
+except KeyboardInterrupt:
+    print("\nSimulation stopped.")
+    ser.close()

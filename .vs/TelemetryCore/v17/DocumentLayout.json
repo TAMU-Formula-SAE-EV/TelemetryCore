@@ -1,0 +1,230 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\makefile||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:makefile||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\test\\read_websocket.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:test\\read_websocket.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\serial_interface.h||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\serial_interface.h||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\serial_interface.cc||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\serial_interface.cc||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\packet_identifier.h||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\packet_identifier.h||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\main.cc||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\main.cc||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\test\\simulate_serial.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:test\\simulate_serial.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\test.cfg||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:test.cfg||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\readme.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:readme.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\rs232\\rs232.c||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:lib\\rs232\\rs232.c||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\rs232\\rs232.h||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:lib\\rs232\\rs232.h||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\cpputil\\utils.cc||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:lib\\cpputil\\utils.cc||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\websocket\\websocketpp\\common\\thread.hpp||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:lib\\websocket\\websocketpp\\common\\thread.hpp||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "test.cfg",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\test.cfg",
+              "RelativeDocumentMoniker": "test.cfg",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\test.cfg",
+              "RelativeToolTip": "test.cfg",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-03-02T02:46:59.924Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "makefile",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\makefile",
+              "RelativeDocumentMoniker": "makefile",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\makefile",
+              "RelativeToolTip": "makefile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAABXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-02-28T03:27:04Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "main.cc",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\main.cc",
+              "RelativeDocumentMoniker": "src\\main.cc",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\main.cc",
+              "RelativeToolTip": "src\\main.cc",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAG0AAACCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-01T19:41:06.056Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "simulate_serial.py",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\test\\simulate_serial.py",
+              "RelativeDocumentMoniker": "test\\simulate_serial.py",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\test\\simulate_serial.py",
+              "RelativeToolTip": "test\\simulate_serial.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2025-03-02T01:05:49.409Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "readme.txt",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\readme.txt",
+              "RelativeDocumentMoniker": "readme.txt",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\readme.txt",
+              "RelativeToolTip": "readme.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-03-02T02:46:12.431Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "read_websocket.py",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\test\\read_websocket.py",
+              "RelativeDocumentMoniker": "test\\read_websocket.py",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\test\\read_websocket.py",
+              "RelativeToolTip": "test\\read_websocket.py",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2025-03-02T01:05:47.033Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "serial_interface.cc",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\serial_interface.cc",
+              "RelativeDocumentMoniker": "src\\serial_interface.cc",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\serial_interface.cc",
+              "RelativeToolTip": "src\\serial_interface.cc",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-01T22:03:38.752Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "rs232.c",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\rs232\\rs232.c",
+              "RelativeDocumentMoniker": "lib\\rs232\\rs232.c",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\rs232\\rs232.c",
+              "RelativeToolTip": "lib\\rs232\\rs232.c",
+              "ViewState": "AgIAAHUCAAAArGZmZmYEwAoCAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-03-01T22:15:07.942Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "rs232.h",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\rs232\\rs232.h",
+              "RelativeDocumentMoniker": "lib\\rs232\\rs232.h",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\rs232\\rs232.h",
+              "RelativeToolTip": "lib\\rs232\\rs232.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAABVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-03-01T22:27:49.285Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "serial_interface.h",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\serial_interface.h",
+              "RelativeDocumentMoniker": "src\\serial_interface.h",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\serial_interface.h",
+              "RelativeToolTip": "src\\serial_interface.h",
+              "ViewState": "AgIAAAEAAABAZmZmZuYswBYAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-03-01T20:10:52.592Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "packet_identifier.h",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\packet_identifier.h",
+              "RelativeDocumentMoniker": "src\\packet_identifier.h",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\src\\packet_identifier.h",
+              "RelativeToolTip": "src\\packet_identifier.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-03-01T19:12:56.368Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "utils.cc",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\cpputil\\utils.cc",
+              "RelativeDocumentMoniker": "lib\\cpputil\\utils.cc",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\cpputil\\utils.cc",
+              "RelativeToolTip": "lib\\cpputil\\utils.cc",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-01T20:16:59.068Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "thread.hpp",
+              "DocumentMoniker": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\websocket\\websocketpp\\common\\thread.hpp",
+              "RelativeDocumentMoniker": "lib\\websocket\\websocketpp\\common\\thread.hpp",
+              "ToolTip": "C:\\Users\\barivadaria\\Documents\\FSAE\\TelemetryCore\\lib\\websocket\\websocketpp\\common\\thread.hpp",
+              "RelativeToolTip": "lib\\websocket\\websocketpp\\common\\thread.hpp",
+              "ViewState": "AgIAABUAAAAAFQAAAEAlwDMAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-02-28T03:57:02.052Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

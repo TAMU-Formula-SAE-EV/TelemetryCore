@@ -3,12 +3,16 @@
 
 #include <iostream>
 
-#if defined(WIN32)
+#if defined(_WIN32)
     #include "../lib/rs232/rs232.h"
 #elif defined(__APPLE__)
     #include "../lib/serialosx/serialosx.h"
 #endif
 
+
+#ifdef _WIN32 //added so uint8_t is recognized on windows
+    #include <cstdint>
+#endif
 class SerialInterface {
 
 // instance memory needed:
@@ -16,7 +20,7 @@ class SerialInterface {
 //  on win: the com port number (cport_nr)
 #if defined(__APPLE__)
     int fd;
-#elif defined(WIN32)
+#elif defined(_WIN32) 
     int cport_nr;
 #endif
 
