@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <random>
 #include <signal.h>
+#include <fstream>
 
 #ifdef _WIN32
     #include <Windows.h> 
@@ -19,7 +20,7 @@
 #define VERBOSE_STATE       // send info on state update
 #define VERBOSE_WS          // send info about ws send
 #define STATEFULL_WS        // collect frames in a map and send all updates at once
-#define NO_SERIAL           // do not use serial 
+#define SPOOF_SERIAL        // do not use serial 
 
 // this is the type of function sigaction uses
 // typedef for better ergonomics
@@ -71,7 +72,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
         if (t_now - t_mount < 1000) continue;       // use an epsilon oops
         t_mount = t_now;
 
-#ifdef NO_SERIAL
+#ifdef SPOOF_SERIAL
         size_t read = 0;        // this code is junk re. ptr handling
         for (auto iter = parsed_mappings.begin(); iter != parsed_mappings.end() && read < sizeof(buffer); iter++) 
         {
@@ -163,7 +164,11 @@ sig_handler_t Core::TermHandler(void)
 // OMG ! main function :wow:
 int main(int argc, char** argv)
 {
+#ifdef _WIN32
+    std::string serial_port = "COM1";
+#else
     std::string serial_port = "/dev/ttys1";
+#endif
     if (argc > 1) { serial_port = argv[1]; }
 
 
@@ -182,7 +187,7 @@ int main(int argc, char** argv)
     #endif
 
     // Run telemetry with com port and config file
-    core.Run(serial_port, "test.cfg", 9000, 9003);
+    core.Run(serial_port, "test.cfg", 9000, 9001);
 }
 
 
