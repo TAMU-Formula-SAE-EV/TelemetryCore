@@ -38,7 +38,7 @@ public:
         }
     }
 
-    inline void RegisterDatastreams(std::map<uint32_t, std::vector<PacketMapping>> mappings) {
+    inline void RegisterDatastreams(std::map<uint32_t, std::vector<PacketMapping>>& mappings) {
         datastreams = "{\"streams\": [";
         for (const auto& [key, value] : mappings) {
             for (const PacketMapping& mapping : value) {

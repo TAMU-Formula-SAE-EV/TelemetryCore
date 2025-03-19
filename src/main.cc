@@ -1,5 +1,11 @@
+#include <iostream>
+#include <cstdlib>
 #include <random>
 #include <signal.h>
+
+#ifdef _WIN32
+    #include <Windows.h> 
+#endif
 
 #include "packet_identifier.h"
 #include "packet_mapper.h"
@@ -8,12 +14,6 @@
 #include "log_loader.h"
 #include "http_handle.h"
 #include "../lib/cpputil/utils.h"
-
-#ifdef _WIN32       // what is this crap?
-    #include <cstdlib> // For Windows only, added to use functions like exit() and other stuff
-    #include <iostream>
-    #include <windows.h> // To use SetConsoleCtrlHandler
-#endif
 
 #define VERBOSE_RECV        // send info on recv
 #define VERBOSE_STATE       // send info on state update
@@ -46,7 +46,7 @@ struct Core {
 // actual main function 
 int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint16_t http_port, uint16_t ws_port) {
     
-    // if (!mapper.LoadMappings(cfg_file)) std::cerr << "Failed to load mappings from config file\n"; 
+    if (!mapper.LoadMappings(cfg_file)) std::cerr << "Failed to load mappings from config file\n"; 
 
     std::cout << "Parsed the following packet mappings from config:\n";
     std::cout << mapper.Str() << "\n";
@@ -55,11 +55,12 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
                                                             // 115200 baud = 14.4 KB/s ~= 14 KB/s
                                                             // (14 KB/s) / (14 B/frame) = 1000 frames/s
 
-    http.RegisterDatastreams(mapper.GetMappings());
+
+    auto& parsed_mappings = mapper.GetMappings();
+    http.RegisterDatastreams(parsed_mappings);
 
     http.StartAsync(http_port);
     socket.Start(ws_port);
-
 
     uint8_t buffer[14*32]{0};
 
@@ -71,10 +72,15 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
         t_mount = t_now;
 
 #ifdef NO_SERIAL
-        // TODO: make a more sophisticated system for this!
-        uint8_t test[] {0xf5, 0x00, 0x00, 0x00, 0xff, 0x7d, 0x22, 0x53, 0x6f, 0x7b, 0x89, 0xd1, 0x0c, 0xae};
-        size_t read = sizeof(test);
-        memcpy(buffer, test, sizeof(test));
+        size_t read = 0;        // this code is junk re. ptr handling
+        for (auto iter = parsed_mappings.begin(); iter != parsed_mappings.end() && read < sizeof(buffer); iter++) 
+        {
+            buffer[read++] = 0xf5;
+            std::reverse_copy((uint8_t*)&iter->first, (uint8_t*)&iter->first + sizeof(iter->first), buffer + read);
+            for (uint8_t i = 0; i < 8; i++) buffer[read + 5 + i] = rand() % 0xFF;  // fucking slow 
+            read += 13;
+            buffer[read++] = 0xae;
+        }
 #else
         size_t read = serial.Read(buffer, sizeof(buffer)); 
         // WINDOWS: figure out why this is not working - make a virtual comport to then test this out in a python script
@@ -123,6 +129,10 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
     }
 }
 
+// TODO: im going to revisit all of the below later, im too lazy rn -jus
+//       for e im not sure ctrlhdl is exactly what were looking for on
+//       win api 
+
 // function returns a function that is the signal handler
 // this inner function has access to all the data inside
 // core, but is free of Core::* function pointer 
@@ -160,10 +170,9 @@ int main(int argc, char** argv)
     Core core{};
 
     // Grab the TermHandler and bind it using sigaction
-
     #ifdef _WIN32
         // On Windows, use SetConsoleCtrlHandler for handling signals
-        SetConsoleCtrlHandler(WindowsCtrlHandler, TRUE);
+        SetConsoleCtrlHandler(WindowsCtrlHandler, TRUE);    // did chatgpt generate this? -jus
     #else
         struct sigaction sigIntHandler;
         sigIntHandler.sa_handler = core.TermHandler();

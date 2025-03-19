@@ -74,7 +74,7 @@ class PacketMapper {
     bool ExpectCoef(fileiter& it, fileiter end, uint64_t& coeg);
 
 public:
-    inline std::map<uint32_t, std::vector<PacketMapping>> GetMappings() { return mappings; }
+    inline std::map<uint32_t, std::vector<PacketMapping>>& GetMappings() { return mappings; }
 
     std::map<std::string, double> values{};
 

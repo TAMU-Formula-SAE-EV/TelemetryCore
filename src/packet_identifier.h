@@ -4,13 +4,9 @@
 #include <cstdint>
 #include <vector>
 #include <iostream>
+#include <cstring>
+#include <bitset> 
 #include "../lib/cpputil/utils.h"
-#ifdef _WIN32
-    #include <cstring>  // For Windows Only
-    #include <bitset> // included to because of std::bitset being called
-#else
-    // Nothing else needed when running on mac
-#endif
 
 static const uint8_t DELIM_BEGIN = 0xF5;    // A99IE F5AE E1EC
 static const uint8_t DELIM_END = 0xAE;
