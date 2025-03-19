@@ -9,11 +9,17 @@
 #include "http_handle.h"
 #include "../lib/cpputil/utils.h"
 
-//#define VERBOSE_RECV      // send info on recv
-// #define VERBOSE_STATE    // send info on state update
-// #define VERBOSE_WS       // send info about ws send
-#define STATEFULL_WS        // collect frames in a map and send 
-                            // all updates at once
+#ifdef _WIN32       // what is this crap?
+    #include <cstdlib> // For Windows only, added to use functions like exit() and other stuff
+    #include <iostream>
+    #include <windows.h> // To use SetConsoleCtrlHandler
+#endif
+
+#define VERBOSE_RECV        // send info on recv
+#define VERBOSE_STATE       // send info on state update
+#define VERBOSE_WS          // send info about ws send
+#define STATEFULL_WS        // collect frames in a map and send all updates at once
+#define NO_SERIAL           // do not use serial 
 
 // this is the type of function sigaction uses
 // typedef for better ergonomics
@@ -39,7 +45,9 @@ struct Core {
 
 // actual main function 
 int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint16_t http_port, uint16_t ws_port) {
-    if (!mapper.LoadMappings(cfg_file)) {};
+    
+    // if (!mapper.LoadMappings(cfg_file)) std::cerr << "Failed to load mappings from config file\n"; 
+
     std::cout << "Parsed the following packet mappings from config:\n";
     std::cout << mapper.Str() << "\n";
 
@@ -62,7 +70,15 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
         if (t_now - t_mount < 1000) continue;       // use an epsilon oops
         t_mount = t_now;
 
-        int read = serial.Read(buffer, sizeof(buffer));
+#ifdef NO_SERIAL
+        // TODO: make a more sophisticated system for this!
+        uint8_t test[] {0xf5, 0x00, 0x00, 0x00, 0xff, 0x7d, 0x22, 0x53, 0x6f, 0x7b, 0x89, 0xd1, 0x0c, 0xae};
+        size_t read = sizeof(test);
+        memcpy(buffer, test, sizeof(test));
+#else
+        size_t read = serial.Read(buffer, sizeof(buffer)); 
+        // WINDOWS: figure out why this is not working - make a virtual comport to then test this out in a python script
+#endif
         if (read <= 0) continue;
 
         // TODO: make this pass by reference 
@@ -71,7 +87,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
 #ifdef VERBOSE_RECV 
         printf("\nreceived %d bytes:\n", read);
         for (int i = 0; i < read; i++) printf("%02x, ", buffer[i]);
-        printf("\n\nparsed into %d frames:\n", detected.size());
+        printf("\n\nparsed into %d frames:\n", detected.size()); 
         for (CANPacket& packet : detected) {
             std::cout << packet.Str() << "\n";
         }
@@ -121,6 +137,18 @@ sig_handler_t Core::TermHandler(void)
         exit(1); 
     };
 }
+// Above code does nto work for windows, so there's a windows only function below
+// The POSIX functions like sigaction and sigemptyset are not supported on windows. We are using SetConsoleCtrlHandler with with a WindowsCtrlHandler to use Ctrl+C (windows specific button to not get confused).
+#ifdef _WIN32
+    BOOL WINAPI WindowsCtrlHandler(DWORD signal) {
+        if (signal == CTRL_C_EVENT) {
+            printf("\n\n[Core] process ended on CTRL+C (Windows)\n");
+            exit(1);
+        }
+        return TRUE;
+    }
+#endif
+
 
 // OMG ! main function :wow:
 int main(int argc, char** argv)
@@ -132,15 +160,20 @@ int main(int argc, char** argv)
     Core core{};
 
     // Grab the TermHandler and bind it using sigaction
-    struct sigaction sigIntHandler;
-    sigIntHandler.sa_handler = core.TermHandler();
-    sigemptyset(&sigIntHandler.sa_mask);
-    sigIntHandler.sa_flags = 0;
-    sigaction(SIGINT, &sigIntHandler, NULL);
+
+    #ifdef _WIN32
+        // On Windows, use SetConsoleCtrlHandler for handling signals
+        SetConsoleCtrlHandler(WindowsCtrlHandler, TRUE);
+    #else
+        struct sigaction sigIntHandler;
+        sigIntHandler.sa_handler = core.TermHandler();
+        sigemptyset(&sigIntHandler.sa_mask);
+        sigIntHandler.sa_flags = 0;
+        sigaction(SIGINT, &sigIntHandler, NULL);
+    #endif
 
     // Run telemetry with com port and config file
     core.Run(serial_port, "test.cfg", 9000, 9003);
-
 }
 
 
