@@ -18,9 +18,10 @@ struct PacketMapping { // encapsulates the concept: "identifier": [start, end]
     size_t end;
     std::string identifier;
     uint64_t coef;
+    std::string unit;
 
-    PacketMapping(size_t start, size_t end, const std::string& identifier, uint64_t coef)
-        : start(start), end(end), identifier(identifier), coef(coef) {}
+    PacketMapping(size_t start, size_t end, const std::string& identifier, uint64_t coef, const std::string& unit)
+        : start(start), end(end), identifier(identifier), coef(coef), unit(unit) {}
 
     std::string Str();
 };

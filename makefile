@@ -14,18 +14,12 @@ SRC_DIRS ?= ./src ./lib
 C_V ?= 17
 CPP_V ?= 17
 
-
-
 ifeq ($(OS),Windows_NT)
-    # Exclude serial osx
+# Exclude serial osx 		note: can't we just wrap serialosx header in an ifdef __APPLE__? -jus
 SRCS := $(shell find $(SRC_DIRS) -type f \( -name "*.cc" -or -name "*.c" -or -name "*.s" \) ! -path "*/lib/serialosx/*")
 else
 SRCS := $(shell find $(SRC_DIRS) -name *.cc -or -name *.c -or -name *.s)
 endif
-
-
-
-
 
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
@@ -37,8 +31,6 @@ INC_DIRS := $(SRC_DIRS) $(shell powershell -Command "Get-ChildItem -Path ./lib -
 else
 INC_DIRS := $(shell find $(SRC_DIRS) -type d)
 endif
-
-
 
 INC_FLAGS := $(addprefix -I,$(INC_DIRS)) 
 
@@ -62,8 +54,6 @@ ifeq ($(OS),Windows_NT)
 else
     LDFLAGS := -ldl
 endif
-
-
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS) 

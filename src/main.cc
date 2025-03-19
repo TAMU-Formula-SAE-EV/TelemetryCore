@@ -46,7 +46,7 @@ struct Core {
 // actual main function 
 int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint16_t http_port, uint16_t ws_port) {
     
-    if (!mapper.LoadMappings(cfg_file)) std::cerr << "Failed to load mappings from config file\n"; 
+    if (!mapper.LoadMappings(cfg_file)) std::cerr << "[WARNING] Encountered some error while loading mappings from config file\n"; 
 
     std::cout << "Parsed the following packet mappings from config:\n";
     std::cout << mapper.Str() << "\n";

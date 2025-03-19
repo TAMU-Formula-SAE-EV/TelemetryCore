@@ -12,8 +12,8 @@ bool between(const char ch, const char min, const char max)
 
 std::string PacketMapping::Str() 
 {
-    return Utils::StrFmt("PacketMapping{ range=%d:%d identifier=%s coef=%d}",
-        start, end, identifier, coef);
+    return Utils::StrFmt("PacketMapping{ range=%d:%d identifier=%s coef=%d unit=%s }",
+        start, end, identifier, coef, unit);
 }
 
 bool PacketMapper::ExpectID(fileiter& it, fileiter end, uint32_t& id) 
@@ -105,7 +105,7 @@ bool PacketMapper::ExpectIdentifier(fileiter& it, fileiter end, std::string& ide
 
 bool PacketMapper::ExpectCoef(fileiter& it, fileiter end, uint64_t& coef) {
     coef = 0;
-     while (it != end) {
+    while (it != end) {
         if (between(*it, '0', '9')) {
             coef *= 10;
             coef += (uint8_t)(*it - '0');
@@ -115,7 +115,8 @@ bool PacketMapper::ExpectCoef(fileiter& it, fileiter end, uint64_t& coef) {
             break;
         }
     }
-    return BadEOF();
+    return coef != 0; // coef must be non-zero, otherwise its not a valid coef.
+                      // coef = 0 can also indicate a parsing failure
 }
 
 bool PacketMapper::LoadMappings(const std::string& path) 
@@ -151,9 +152,25 @@ bool PacketMapper::LoadMappings(const std::string& path)
             uint64_t coef = 1;
             if (*it == '/') {
                 IterWS(it);
-                ExpectCoef(it, end, coef);
+                if (!ExpectCoef(it, end, coef)) {
+                    std::cout << "[ParsingError] Failed to parse coef or encountered invalid coef.\n";
+                    return false;
+                }
             }
-            PacketMapping mapping{first, last, identifier, coef};
+            
+            std::string unit = "";
+            if (*it == '(') {
+                IterWS(it);
+                while (it != end) {
+                    if (*it == ')') {
+                        IterWS(it);
+                        break;
+                    }
+                    unit += *it++;
+                }
+            }
+
+            PacketMapping mapping{first, last, identifier, coef, unit};
             mappings.push_back(mapping);
 
             if (*it == '}') {
@@ -209,7 +226,6 @@ void PacketMapper::LogState(std::ofstream& file)
         file << key << "=" << value << "\n";
     }
 }
-
 
 void TestPacketMapper(PacketMapper& mapper) 
 {

@@ -42,7 +42,7 @@ public:
         datastreams = "{\"streams\": [";
         for (const auto& [key, value] : mappings) {
             for (const PacketMapping& mapping : value) {
-                datastreams += Utils::StrFmt("{\"name\": \"%s\", \"units\": \"%s\", \"short_name\": \"%s\"},", mapping.identifier, "unit", mapping.identifier);
+                datastreams += Utils::StrFmt("{\"name\": \"%s\", \"units\": \"%s\", \"short_name\": \"%s\"},", mapping.identifier, mapping.unit, mapping.identifier);
             }
         }
         datastreams.pop_back();
