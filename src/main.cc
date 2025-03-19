@@ -52,10 +52,11 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
     std::cout << "Parsed the following packet mappings from config:\n";
     std::cout << mapper.Str() << "\n";
 
+#ifndef SPOOF_SERIAL
     if (!serial.Connect(serial_port, 1152000)) return -1;    // pretty fast baudrate
                                                             // 115200 baud = 14.4 KB/s ~= 14 KB/s
                                                             // (14 KB/s) / (14 B/frame) = 1000 frames/s
-
+#endif
 
     auto& parsed_mappings = mapper.GetMappings();
     http.RegisterDatastreams(parsed_mappings);

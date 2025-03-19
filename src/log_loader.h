@@ -1,6 +1,9 @@
 #ifndef _LOG_LOADER_H_ 
 #define _LOG_LOADER_H_ 
 
+#include <cstring>
+#include <cstdlib>
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <map>
