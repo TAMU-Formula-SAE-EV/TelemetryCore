@@ -10,9 +10,12 @@
 #include "../lib/cpputil/utils.h"
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 //#define VERBOSE_RECV    // send info on recv
 // #define VERBOSE_STATE   // send info on state update
 =======
+=======
+>>>>>>> Stashed changes
 #ifdef _WIN32
     #include <cstdlib> // For Windows only, added to use functions like exit() and other stuff
     #include <iostream>
@@ -60,6 +63,9 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
     {
         std::cerr << "Failed to load mappings from config file\n"; //printing the error message for testing
     }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     std::cout << "Parsed the following packet mappings from config:\n";
     std::cout << mapper.Str() << "\n";
@@ -74,6 +80,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
     uint64_t t_mount = Utils::PreciseTime<int64_t, Utils::t_us>();
     while (true) {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // super-fast scheduler
         uint64_t t_now = Utils::PreciseTime<int64_t, Utils::t_us>();
         if (t_now - t_mount < 1000) continue;
@@ -83,13 +90,20 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
 
         int read = serial.Read(buffer, sizeof(buffer));
 =======
+=======
+>>>>>>> Stashed changes
 
 #ifdef NO_SERIAL
         uint8_t test[] {0xf5, 0x00, 0x00, 0x00, 0xff, 0x7d, 0x22, 0x53, 0x6f, 0x7b, 0x89, 0xd1, 0x0c, 0xae};
         size_t read = sizeof(test);
         memcpy(buffer, test, sizeof(test));
 #else
+<<<<<<< Updated upstream
         size_t read = serial.Read(buffer, sizeof(buffer)); //figure out why this is not working - make a virtual comport to then test this out in a python script
+#endif
+>>>>>>> Stashed changes
+=======
+        size_t read = serial.Read(buffer, sizeof(buffer)); //figure out why this is not working - you have to make a virtual comport to then test this out. Make a python script like what is in the test folder
 #endif
 >>>>>>> Stashed changes
         if (read <= 0) continue;
@@ -183,15 +197,21 @@ int main(int argc, char** argv)
 
     // Run telemetry with com port and config file
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     core.Run(serial_port, "test.cfg", 9000, 9003);
 
 =======
+=======
+>>>>>>> Stashed changes
     // for windows you need to run it in a com port
     #ifdef _WIN32
         core.Run("COM1", "test.cfg", 9000);
     #else
         core.Run("/dev/ttys023", "test.cfg", 9000);
     #endif
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 }
 
