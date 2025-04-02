@@ -20,7 +20,7 @@
 #define VERBOSE_STATE       // send info on state update
 #define VERBOSE_WS          // send info about ws send
 #define STATEFULL_WS        // collect frames in a map and send all updates at once
-//#define SPOOF_SERIAL        // do not use serial 
+#define SPOOF_SERIAL        // do not use serial 
 
 // this is the type of function sigaction uses
 // typedef for better ergonomics
@@ -192,6 +192,8 @@ int main(int argc, char** argv)
 
     // Run telemetry with com port and config file
     core.Run(serial_port, "test.cfg", 9000, 9001);
+
+    std::cout << "wtf\n";
 }
 
 
