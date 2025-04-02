@@ -53,7 +53,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
     std::cout << mapper.Str() << "\n";
 
 #ifndef SPOOF_SERIAL
-    if (!serial.Connect(serial_port, 115200)) return -1;    // pretty fast baudrate
+    if (!serial.Connect(serial_port, 1152000)) return -1;    // pretty fast baudrate
                                                             // 115200 baud = 14.4 KB/s ~= 14 KB/s
                                                             // (14 KB/s) / (14 B/frame) = 1000 frames/s
 #endif
@@ -85,9 +85,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
         }
 #else
         size_t read = serial.Read(buffer, sizeof(buffer)); 
-        //std::cout << "Bytes being read: " << read << "\n"; // printing out read bytes if any
-        // WINDOWS: DONE: Made a paired virtual comport (COM10 for writing in simulate_serial_win.py and COM11 for reading in this file)
-        // Comports can only let one app use them at a time, either for sending or reciving. making a virtual one emulates two physical devices communicating together.
+        // WINDOWS: figure out why this is not working - make a virtual comport to then test this out in a python script
 #endif
         if (read <= 0) continue;
 
@@ -168,7 +166,7 @@ sig_handler_t Core::TermHandler(void)
 int main(int argc, char** argv)
 {
 #ifdef _WIN32
-    std::string serial_port = "COM11";
+    std::string serial_port = "COM1";
 #else
     std::string serial_port = "/dev/ttys1";
 #endif
@@ -180,8 +178,7 @@ int main(int argc, char** argv)
     // Grab the TermHandler and bind it using sigaction
     #ifdef _WIN32
         // On Windows, use SetConsoleCtrlHandler for handling signals
-        SetConsoleCtrlHandler(WindowsCtrlHandler, TRUE);    // did chatgpt generate this? -jus 
-        // yeah chat helped me with this - bari
+        SetConsoleCtrlHandler(WindowsCtrlHandler, TRUE);    // did chatgpt generate this? -jus
     #else
         struct sigaction sigIntHandler;
         sigIntHandler.sa_handler = core.TermHandler();
