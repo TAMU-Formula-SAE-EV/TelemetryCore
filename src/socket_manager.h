@@ -22,7 +22,7 @@ using websocketpp::lib::bind;
 // For future reference: https://github.com/zaphoyd/websocketpp/blob/master/examples/broadcast_server/broadcast_server.cpp
 
 class SocketManager {
-    typedef std::set<connection_hdl,std::owner_less<connection_hdl>> con_list;
+    typedef std::set<connection_hdl, std::owner_less<connection_hdl>> con_list;
 
     server server;
     con_list connections;

@@ -8,6 +8,8 @@
 
 #include "../lib/httplib/httplib.h"
 
+#include "packet_mapper.h"
+
 class HTTPHandle {
     httplib::Server server{};
     std::thread* thread;

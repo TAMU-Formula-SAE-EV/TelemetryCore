@@ -12,6 +12,8 @@
 
 void SocketManager::Start(uint16_t port) {
     server.init_asio();
+    server.clear_access_channels(websocketpp::log::alevel::all);
+    server.clear_error_channels(websocketpp::log::elevel::all);
 
     server.set_open_handler(bind(&SocketManager::OnConnOpen, this,::_1));
     server.set_close_handler(bind(&SocketManager::OnConnClose, this,::_1));
