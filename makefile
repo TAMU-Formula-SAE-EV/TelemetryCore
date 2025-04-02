@@ -2,21 +2,27 @@
 
 ifeq ($(OS),Windows_NT) #making sure that you can make the files properly on windowsgit
 MKDIR_P = cmd.exe /c mkdir
+BUILD_DIR ?= bin
+SRC_DIRS ?= src lib
+#MKDIR_P = mkdir
 else
 MKDIR_P = mkdir -p
+BUILD_DIR ?= ./bin
+SRC_DIRS ?= ./src ./lib
 endif
 
 TARGET_EXEC ?= telemetrycore 
 
-BUILD_DIR ?= ./bin
-SRC_DIRS ?= ./src ./lib
 
 C_V ?= 17
 CPP_V ?= 17
 
+
+
+
 ifeq ($(OS),Windows_NT)
 # Exclude serial osx 		note: can't we just wrap serialosx header in an ifdef __APPLE__? -jus
-SRCS := $(shell find $(SRC_DIRS) -type f \( -name "*.cc" -or -name "*.c" -or -name "*.s" \) ! -path "*/lib/serialosx/*")
+SRCS := $(shell find $(SRC_DIRS) -type f \( -name "*.cc" -or -name "*.c" -or -name "*.s" \) ! -path "*/lib/serialosx/*") #wrapped all serialosx files in an #ifdef __APPLE__ statement
 else
 SRCS := $(shell find $(SRC_DIRS) -name *.cc -or -name *.c -or -name *.s)
 endif
@@ -91,4 +97,3 @@ endif
 
 -include $(DEPS)
 
-#MKDIR_P ?= mkdir -p
