@@ -188,7 +188,7 @@ bool PacketMapper::LoadMappings(const std::string& path)
     return true;
 }
 
-void PacketMapper::MapPacket(const CANPacket& packet, std::vector<std::pair<std::string, double>>& vec)
+void PacketMapper::MapPacket(const CANPacket& packet, std::vector<MappedPacket>& vec)
 {
     auto it = mappings.find(packet.id);
     if (it == mappings.end()) return;
@@ -200,8 +200,10 @@ void PacketMapper::MapPacket(const CANPacket& packet, std::vector<std::pair<std:
             extracted |= packet.data[i] << (8 * (width - (j++))); // other endian configuration
         }
         double adjusted = extracted / (double)mapping.coef;
-        values[mapping.identifier] = adjusted;
-        vec.push_back({mapping.identifier, adjusted});
+        auto mp = MappedPacket(mapping.identifier, adjusted, packet.timestamp);
+        // https://stackoverflow.com/a/73372990/11337553
+        values.insert_or_assign(mapping.identifier, mp);
+        vec.push_back(mp);
     }
 }
 
@@ -223,7 +225,7 @@ void PacketMapper::LogState(std::ofstream& file)
 {
     file << "@" << Utils::PreciseTime<uint64_t, Utils::t_ms>() << "\n";
     for (const auto& [key, value] : values) {
-        file << key << "=" << value << "\n";
+        file << key << "=" << value.value << "\n";
     }
 }
 
@@ -256,7 +258,7 @@ void TestPacketMapper(PacketMapper& mapper)
 
     std::cout << "\nTesting parsing of packets: \n" << packet1.Str() << "\n" << packet2.Str() << "\n";
 
-    std::vector<std::pair<std::string, double>> updated{};
+    std::vector<MappedPacket> updated{};
     mapper.MapPacket(packet1, updated);
     mapper.MapPacket(packet2, updated);
     std::cout << "\n\nValues after parsing: \n";

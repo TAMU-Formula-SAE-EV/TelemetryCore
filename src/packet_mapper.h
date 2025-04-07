@@ -26,6 +26,25 @@ struct PacketMapping { // encapsulates the concept: "identifier": [start, end]
     std::string Str();
 };
 
+// MappedPacket is the result of mapping a CANPacket to a human
+// readable format. This is the result of the mapping process
+// and is used to send the data over the network. This is not
+// the same as the PacketMapping, which is used to map the
+// CANPacket to a human readable format.
+struct MappedPacket { 
+    std::string identifier;
+    double value;
+    uint32_t timestamp;
+
+    MappedPacket(const std::string& identifier, double value, uint32_t timestamp)
+        : identifier(identifier), value(value) , timestamp(timestamp) {}
+
+    inline void Stream(std::ostream& os) const {
+        //os << Utils::StrFmt("{\"identifier\": \"%s\", \"value\": %f, \"timestamp\": %u}", identifier.c_str(), value, timestamp);
+        os << timestamp << ":" << identifier << ":" << value;
+    }
+};
+
 class PacketMapper {
     using fileiter = std::istreambuf_iterator<char>;
     // treemap is intentional, these are bounded to human 
@@ -77,12 +96,16 @@ class PacketMapper {
 public:
     inline std::map<uint32_t, std::vector<PacketMapping>>& GetMappings() { return mappings; }
 
-    std::map<std::string, double> values{};
+    std::map<std::string, MappedPacket> values{};
 
     // Parse the mapping tree from the config file at path
     bool LoadMappings(const std::string& path);
 
-    void MapPacket(const CANPacket& packet, std::vector<std::pair<std::string, double>>& vec);
+    // Take a CANPacket that was parsed from the network and map it
+    // based on the config file. This writes the mapped packets to the
+    // (a) the values map in this class scope
+    // (b) the vector passed in as reference
+    void MapPacket(const CANPacket& packet, std::vector<MappedPacket>& vec);
    
     std::string Str();
 
@@ -90,7 +113,8 @@ public:
 
     inline void PrintState() {
         for (const auto& [key, value] : values) {
-            std::cout << key << ": " << value << "\n";
+            value.Stream(std::cout);    // when printing we stream each packet
+                                        // to stdout
         }
     }
 

@@ -12,6 +12,8 @@
 #include "../lib/websocket/websocketpp/config/asio_no_tls.hpp"
 #include "../lib/websocket/websocketpp/server.hpp"
 
+#include "packet_mapper.h"  // MappedPacket
+
 typedef websocketpp::server<websocketpp::config::asio> server;
 
 using websocketpp::connection_hdl;
@@ -34,13 +36,12 @@ public:
     inline void OnRecvMessage(connection_hdl hdl, server::message_ptr msg) { }
 
     inline void Run() { server.run();}
-    void TransmitUpdatedPair(std::pair<std::string, double> update);
+    void TransmitUpdatedFrame(MappedPacket& update);
     void Start(uint16_t port);
     SocketManager() {  }
 };
 
 
 void TestSocketManager(SocketManager& socket);
-
 
 #endif

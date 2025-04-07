@@ -105,24 +105,24 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
       }
     }
     // TODO: move to loop scope and reserve size
-    std::vector<std::pair<std::string, double>> updated{};
+    std::vector<MappedPacket> updated{};
     for (const CANPacket& packet : detected) {
       mapper.MapPacket(packet, updated);
     }
 
     if (flags & STATEFULL_WS) {
-      for (const auto& pair : updated) {
+      for (auto& mapped_packet : updated) {
         if (flags & VERBOSE_WS) {
-          std::cout << pair.first << ": " << pair.second << "\n";
+          mapped_packet.Stream(std::cout);
         }
-        socket.TransmitUpdatedPair(pair);
+        socket.TransmitUpdatedFrame(mapped_packet);
       }
     } else {
-      for (const auto& [key, value] : mapper.values) {
+      for (auto& [_, mapped_packet] : mapper.values) {
         if (flags & VERBOSE_WS) {
-          std::cout << key << ": " << value << "\n";
+          mapped_packet.Stream(std::cout);
         }
-        socket.TransmitUpdatedPair({key, value});
+        socket.TransmitUpdatedFrame(mapped_packet);
       }
     }
 
@@ -171,6 +171,23 @@ BOOL WINAPI WindowsCtrlHandler(DWORD signal) {
   #define DEFAULT_SERIAL_PORT "/dev/ttys1"
 #endif
 
+
+template <typename T>   // runs O(1) can be slow, but im too fuckin fast boi
+T convert_validate_int(const std::string& str, bool& ok, const std::string name, int64_t lower_bound = 0, int64_t upper_bound = 10000000) {
+  std::istringstream iss(str);
+  T value;
+  iss >> value;
+  if (iss.fail() || !iss.eof()) {
+    ok = false;
+    std::cerr << "[ArgumentError] Input for " << name << " cannot be parsed: " << str << std::endl;
+  } 
+  if (value < lower_bound || value > upper_bound) {
+    ok = false;
+    std::cerr << "[ArgumentError] Input for " << name << " out of range [" << lower_bound << ", " << upper_bound << "]: " << str << std::endl;
+  }
+  return value;
+}
+
 // OMG ! main function :wow:
 int main(int argc, char** argv) {
   argparse::ArgumentParser program("telemetrycore", "1.1");
@@ -185,20 +202,24 @@ int main(int argc, char** argv) {
       .help("The config file to load mappings from");
 
   program.add_argument("-p", "--http-port")
-      .default_value(9000)
+      .default_value("9000")
       .help("The port to run the HTTP server on");
 
   program.add_argument("-w", "--ws-port")
-      .default_value(9001)
+      .default_value("9001")
       .help("The port to run the WebSocket server on");
 
   program.add_argument("-b", "--baud")
-      .default_value(115200)
+      .default_value("115200")
       .help("The baud rate to connect to the serial port with");
 
   program.add_argument("-e", "--update-epsilon")
-      .default_value(10)
+      .default_value("10")
       .help("The update epsilon in microseconds");
+
+  program.add_argument("-a", "--assets-dir")
+      .default_value("assets")
+      .help("The directory of the assets to serve");
 
   program.add_argument("", "--verbose-all")
       .flag()
@@ -236,12 +257,20 @@ int main(int argc, char** argv) {
     exit(1);
   }
 
-  std::string serial_port = program.get<std::string>("--serial-port");
-  std::string cfg_file = program.get<std::string>("--config-file");
-  int http_port = program.get<int>("--http-port");
-  int ws_port = program.get<int>("--ws-port");
-  int baud = program.get<int>("--baud");
-  int update_epsilion = program.get<int>("--update-epsilon");
+  auto serial_port = program.get<std::string>("--serial-port");
+
+  auto cfg_file = program.get<std::string>("--config-file");
+
+  bool ok = true;     // this is aids but its an easy fix shut the fuck up
+  auto http_port = convert_validate_int<uint16_t>(program.get<std::string>("--http-port"), ok, "http-port", 0, 65535);
+  auto ws_port = convert_validate_int<uint16_t>(program.get<std::string>("--ws-port"), ok, "ws-port", 0, 65535);
+  auto baud = convert_validate_int<uint32_t>(program.get<std::string>("--baud"), ok, "baud", 0, 1152000);
+  auto update_epsilion = convert_validate_int<int64_t>(program.get<std::string>("--update-epsilon"), ok, "update-epsilon", 0, 1000000);
+  if (!ok) {
+    std::cerr << "[ArgumentError] Invalid arguments, exiting...\n";
+    return -1;
+  }
+
   uint8_t flags = 0;
   if (serial_port == "spoof") flags |= SPOOF_SERIAL;
   if (program["--verbose-all"] == true)   flags |= VERBOSE_RECV | VERBOSE_STATE | VERBOSE_WS;
@@ -251,7 +280,6 @@ int main(int argc, char** argv) {
   if (program["--log-state"] == true) flags |= LOG_STATE;
   if (program["--spoof-serial"] == true) flags |= SPOOF_SERIAL;
   if (program["--stateless-ws"] == false) flags |= STATEFULL_WS;
-
 
   Core core{};
 

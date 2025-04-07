@@ -1,8 +1,8 @@
 #include "socket_manager.h"
 
- void SocketManager::TransmitUpdatedPair(std::pair<std::string, double> update) {
+ void SocketManager::TransmitUpdatedFrame(MappedPacket& update) {
     std::ostringstream oss;
-    oss << update.first << ":" << update.second;
+    update.Stream(oss);     // this is maybe slow?
     const std::string result = oss.str();
 
     for (auto it = connections.begin(); it != connections.end(); ++it) {
@@ -24,17 +24,15 @@ void SocketManager::Start(uint16_t port) {
     server_thread = std::thread(&SocketManager::Run, this);
 }
 
-
 void TestSocketManager(SocketManager& socket)
 {
     socket.Start(9002);
 
-    std::pair<std::string, double> pair{"update", 0};
+    MappedPacket frame("update", 0, 0);
     for (int i = 1; true; i++) {
         if (i % 1000 == 0) i = 1;
-        pair.second = i / 2.5;
-        // std::cout << pair.first << "|" << pair.second << "\n";
-
-        socket.TransmitUpdatedPair(pair);
+        frame.value = i / 2.5;
+        frame.timestamp = Utils::PreciseTime<int64_t, Utils::t_us>();
+        socket.TransmitUpdatedFrame(frame);
     }
 }

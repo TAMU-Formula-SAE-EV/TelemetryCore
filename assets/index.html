@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="jquery.min.js"></script>
 
     <script defer>
 
         const entries = {};
 
-        const socket = new WebSocket('ws://localhost:9001/');
+        const socket = new WebSocket('ws://localhost:9010/');
 
         socket.addEventListener('open', function(event) {
             console.log('Connected to server');
@@ -18,16 +18,21 @@
         socket.addEventListener('message', function(event) {
             console.log('Message from server ', event.data);
 
-            const halfs = event.data.split(':');
-            const key = halfs[0];
-            const value = halfs[1];
-            entries[key] = value;
+            const parts = event.data.split(':');
+            if (parts.length !== 3) {
+                console.error('Invalid message format');
+                return;
+            }
+            const timestamp = parts[0];
+            const key = parts[1];
+            const value = parts[1];
+            entries[key] = [ value, timestamp ];
         });
 
         setInterval(() => {
             $('#entries').empty();
-            for (const [key, value] of Object.entries(entries)) {
-                $('#entries').append(`<tr><td>${key}</td><td>${value}</td></tr>`);
+            for (const [key, [value, timestamp]] of Object.entries(entries)) {
+                $('#entries').append(`<tr><td>${key}</td><td>${value}</td><td>${timestamp}</td></tr>`);
             }
         }, 50);
 
@@ -35,6 +40,7 @@
 </head>
 
 <body>
+    <h1>BOY</h1>
     <h1>Status: <i id="status">N/A</i></h1>
     <table>
         <hr>
