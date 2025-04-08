@@ -109,7 +109,7 @@ public:
    
     std::string Str();
 
-    void LogState(std::ofstream& file);
+    void LogState(std::ofstream& file, uint64_t global_start_time);
 
     inline void PrintState() {
         for (const auto& [key, value] : values) {

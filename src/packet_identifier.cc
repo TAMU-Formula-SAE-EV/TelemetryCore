@@ -31,7 +31,7 @@ std::string CANPacket::Str()
 
 // #define HANDLE_LEFTOVER
 
-std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t size) 
+std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t size, uint32_t global_start_time) 
 {
     // handle the leftovers from the previous buffer
     if (leftover_size > 0) {
@@ -64,7 +64,7 @@ std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t
             // printf("p = %x end = %x\n", p, end);
             // printf("next = %x current = %s\n", *p, current.Str().c_str());
             if (p != end && *(p++) == DELIM_END) {
-                current.Timestamp();
+                current.Timestamp(global_start_time);
                 packets.push_back(current);
                 current.id = 0;
                 memset(current.data, 0, 8);
@@ -134,7 +134,7 @@ void TestPacketIdentifier1(PacketIdentifier& identifier)
     for (int i = 0; i < sizeof(buff2); i++) printf("%2x ", buff2[i]);
     std::cout << "\n";
 
-    std::vector<CANPacket> detected = identifier.IdentifyPackets(buff1, sizeof(buff1));
+    std::vector<CANPacket> detected = identifier.IdentifyPackets(buff1, sizeof(buff1), 0);
     for (CANPacket packet : detected) {
         std::cout << packet.Str() << "\n";
     }
@@ -144,7 +144,7 @@ void TestPacketIdentifier1(PacketIdentifier& identifier)
     // for (int i = 0; i < sizeof(identifier.leftover); i++) printf("%2x ", identifier.leftover[i]);
     // std::cout << " } \n";
 
-    detected = identifier.IdentifyPackets(buff2, sizeof(buff2));
+    detected = identifier.IdentifyPackets(buff2, sizeof(buff2), 0);
     for (CANPacket packet : detected) {
         std::cout << packet.Str() << "\n";
     }
@@ -165,7 +165,7 @@ void TestPacketIdentifier2(PacketIdentifier& identifier)
     for (int i = 0; i < sizeof(buffer); i++) printf("0x%02x, ", buffer[i]);
     std::cout << "\n\n";
 
-    std::vector<CANPacket> detected = identifier.IdentifyPackets(buffer, sizeof(buffer));
+    std::vector<CANPacket> detected = identifier.IdentifyPackets(buffer, sizeof(buffer), 0);
     for (CANPacket packet : detected) {
         std::cout << packet.Str() << "\n";
     }

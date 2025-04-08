@@ -221,10 +221,11 @@ std::string PacketMapper::Str()
     return d;
 }
 
-void PacketMapper::LogState(std::ofstream& file) 
+void PacketMapper::LogState(std::ofstream& file, uint64_t global_start_time) 
 {
-    file << "@" << Utils::PreciseTime<uint64_t, Utils::t_ms>() << "\n";
-    for (const auto& [key, value] : values) {
+    file << "@" << Utils::PreciseTime<uint32_t, Utils::t_ms>() - global_start_time << "\n";
+    for (const auto& [key, value] : values) 
+    {
         file << key << "=" << value.value << "\n";
     }
 }

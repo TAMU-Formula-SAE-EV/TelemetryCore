@@ -8,7 +8,7 @@
 
         const entries = {};
 
-        const socket = new WebSocket('ws://localhost:9010/');
+        const socket = new WebSocket('ws://localhost:9001/');
 
         socket.addEventListener('open', function(event) {
             console.log('Connected to server');
@@ -23,13 +23,13 @@
                 console.error('Invalid message format');
                 return;
             }
-            const timestamp = parts[0];
+            const timestamp = (Number.parseFloat(parts[0]) / 1000);
             const key = parts[1];
-            const value = parts[1];
+            const value = parts[2];
             entries[key] = [ value, timestamp ];
         });
 
-        setInterval(() => {
+        setInterval(() => { 
             $('#entries').empty();
             for (const [key, [value, timestamp]] of Object.entries(entries)) {
                 $('#entries').append(`<tr><td>${key}</td><td>${value}</td><td>${timestamp}</td></tr>`);
@@ -39,14 +39,48 @@
     </script>
 </head>
 
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        width: 10%;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+</style>
+
 <body>
-    <h1>BOY</h1>
     <h1>Status: <i id="status">N/A</i></h1>
     <table>
         <hr>
         <tr>
             <th>Key</th>
             <th>Value</th>
+            <th>Timestamp</th>
         </tr>
         <tbody id="entries">
         </tbody> 

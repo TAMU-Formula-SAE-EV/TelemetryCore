@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <filesystem>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -32,16 +33,18 @@ typedef void (*sig_handler_t)(int);
 // collect all the subsystems, organize in convinient
 // memory base
 struct Core {
-  // subsystems;
+  // subsystems
   PacketIdentifier identifier;
   PacketMapper mapper;
   SerialInterface serial;
   SocketManager socket;
   HTTPHandle http;
   std::ofstream log;
+  uint32_t global_start_time;
 
-  Core() : identifier{}, mapper{}, serial{}, socket{}, http{} {
+  Core(const std::string& assets_dir) : identifier{}, mapper{}, serial{}, socket{}, http{assets_dir} {
     log = std::ofstream("db.txt", std::ios::app);
+    global_start_time = Utils::PreciseTime<uint32_t, Utils::t_ms>();
   }
   int Run(const std::string& serial_port, const std::string& cfg_file, uint16_t http_port, uint16_t ws_port,
           uint32_t baud, uint64_t update_epsilion, uint8_t flags);
@@ -51,13 +54,13 @@ struct Core {
 // actual main function
 int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint16_t http_port, uint16_t ws_port,
               uint32_t baud, uint64_t update_epsilion, uint8_t flags) {
-  if (!mapper.LoadMappings(cfg_file)) std::cerr << "[WARNING] Encountered some error while loading mappings from config file\n";
+  if (!mapper.LoadMappings(cfg_file)) std::cerr << "[Core:Warning] Encountered some error while loading mappings from config file\n";
 
   std::cout << "Parsed the following packet mappings from config:\n";
   std::cout << mapper.Str() << "\n";
 
   if (flags & SPOOF_SERIAL) {
-    std::cout << "[WARNING] Spoofing serial port\n";
+    std::cout << "[Core:Warning] Spoofing serial port\n";
   } else {
     if (!serial.Connect(serial_port, baud)) return -1;  // pretty fast baudrate
                                                         // 115200 baud = 14.4 KB/s ~= 14 KB/s
@@ -94,7 +97,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
     if (read <= 0) continue;
 
     // TODO: make this pass by reference
-    std::vector<CANPacket> detected = identifier.IdentifyPackets(buffer, sizeof(buffer));
+    std::vector<CANPacket> detected = identifier.IdentifyPackets(buffer, sizeof(buffer), global_start_time);
 
     if (flags & VERBOSE_RECV) {
       printf("\nreceived %d bytes:\n", read);
@@ -127,7 +130,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
     }
 
     if (flags & LOG_STATE) {
-      mapper.LogState(log);
+      mapper.LogState(log, global_start_time);
     }
     if (flags & VERBOSE_STATE) {
       std::cout << "\nstate:\n";
@@ -146,7 +149,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
 // namespacing issues
 sig_handler_t Core::TermHandler(void) {
   return [](int sig) {
-    printf("\n\n[Core] process ended on signal = %d\n", sig);
+    printf("\n\n[Core:Fatal] process ended on signal = %d\n", sig);
 
     std::cout << "\nend state:\n";
     // mapper.PrintState();
@@ -158,7 +161,7 @@ sig_handler_t Core::TermHandler(void) {
 #ifdef _WIN32
 BOOL WINAPI WindowsCtrlHandler(DWORD signal) {
   if (signal == CTRL_C_EVENT) {
-    printf("\n\n[Core] process ended on CTRL+C (Windows)\n");
+    printf("\n\n[Core:Fatal] process ended on CTRL+C (Windows)\n");
     exit(1);
   }
   return TRUE;
@@ -258,8 +261,15 @@ int main(int argc, char** argv) {
   }
 
   auto serial_port = program.get<std::string>("--serial-port");
-
   auto cfg_file = program.get<std::string>("--config-file");
+  auto assets_dir = program.get<std::string>("--assets-dir");
+
+  if (std::filesystem::is_directory(assets_dir)) {
+    std::cout << "[Core] assets dir: " << assets_dir << "\n";
+  } else {
+    std::cerr << "[ArgumentError] assets dir not found, exiting...\n";
+    return -1;
+  }
 
   bool ok = true;     // this is aids but its an easy fix shut the fuck up
   auto http_port = convert_validate_int<uint16_t>(program.get<std::string>("--http-port"), ok, "http-port", 0, 65535);
@@ -281,7 +291,7 @@ int main(int argc, char** argv) {
   if (program["--spoof-serial"] == true) flags |= SPOOF_SERIAL;
   if (program["--stateless-ws"] == false) flags |= STATEFULL_WS;
 
-  Core core{};
+  Core core{assets_dir};
 
 // Grab the TermHandler and bind it using sigaction
 #ifdef _WIN32

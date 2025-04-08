@@ -18,8 +18,8 @@ class HTTPHandle {
     std::string datastreams;
 
 public:
-    inline HTTPHandle() {
-        server.set_base_dir("assets");
+    inline HTTPHandle(const std::string& assets_dir) {
+        server.set_base_dir(assets_dir);
 
         server.Get("/datastreams", [&](const httplib::Request& req, httplib::Response& res) {
             res.set_header("Content-Type", "application/json");
@@ -58,7 +58,7 @@ public:
 };
 
 void TestHTTPHandle() {
-    HTTPHandle handle{};
+    HTTPHandle handle{"assets"};
     handle.StartAsync(9000);
 
     for (int i = 0; true; i++) {

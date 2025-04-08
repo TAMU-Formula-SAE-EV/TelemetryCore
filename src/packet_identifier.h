@@ -20,7 +20,7 @@ struct CANPacket {      // 128 bit width
 
     CANPacket() : id(0), timestamp(0) { memset(data, 0, 8); }
 
-    CANPacket(uint32_t id, uint8_t* data) : id(id) {
+    CANPacket(uint32_t id, uint8_t* data): id(id) {
         // memcpy(this->data, data, 8);
         std::copy(data, data+8, this->data);
         Timestamp();
@@ -32,7 +32,9 @@ struct CANPacket {      // 128 bit width
     // mostly for debugging
     void EmplaceFrame(uint8_t* p);
 
-    inline void Timestamp() { timestamp = Utils::PreciseTime<uint32_t, Utils::t_ms>(); }
+    inline void Timestamp(uint32_t global_start_time = 0) { 
+        timestamp = Utils::PreciseTime<uint32_t, Utils::t_ms>() - global_start_time; 
+    }
 
     std::string Str();
 }; 
@@ -45,7 +47,8 @@ public:
     PacketIdentifier() : leftover_size(0) { memset(leftover, 0, 8); }
     
     // think about optimizations to this return type 
-    std::vector<CANPacket> IdentifyPackets(uint8_t* buffer, size_t size);
+    std::vector<CANPacket> IdentifyPackets(uint8_t* buffer, size_t size, uint32_t global_start_time);
+    
 };
 
 void TestPacketIdentifier1(PacketIdentifier& identifier);

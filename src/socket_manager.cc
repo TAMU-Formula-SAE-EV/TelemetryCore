@@ -32,7 +32,7 @@ void TestSocketManager(SocketManager& socket)
     for (int i = 1; true; i++) {
         if (i % 1000 == 0) i = 1;
         frame.value = i / 2.5;
-        frame.timestamp = Utils::PreciseTime<int64_t, Utils::t_us>();
+        frame.timestamp = Utils::PreciseTime<int32_t, Utils::t_ms>();
         socket.TransmitUpdatedFrame(frame);
     }
 }
