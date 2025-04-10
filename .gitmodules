@@ -7,3 +7,6 @@
 [submodule "lib/argparse"]
 	path = lib/argparse
 	url = https://github.com/p-ranav/argparse.git
+[submodule "client-roadrunner"]
+	path = client-roadrunner
+	url = https://github.com/TAMU-Formula-SAE-EV/roadrunner-build.git

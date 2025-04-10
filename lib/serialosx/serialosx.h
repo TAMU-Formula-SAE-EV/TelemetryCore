@@ -1,8 +1,12 @@
+#ifdef __APPLE__
+
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
+
+#endif
 
 #ifdef __cplusplus
 extern "C" {

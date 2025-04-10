@@ -46,13 +46,13 @@ struct Core {
     log = std::ofstream("db.txt", std::ios::app);
     global_start_time = Utils::PreciseTime<uint32_t, Utils::t_ms>();
   }
-  int Run(const std::string& serial_port, const std::string& cfg_file, uint16_t http_port, uint16_t ws_port,
+  int Run(const std::string& serial_port, const std::string& cfg_file, const std::string& host, uint16_t http_port, uint16_t ws_port,
           uint32_t baud, uint64_t update_epsilion, uint8_t flags);
   sig_handler_t TermHandler(void);
 };
 
 // actual main function
-int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint16_t http_port, uint16_t ws_port,
+int Core::Run(const std::string& serial_port, const std::string& cfg_file, const std::string& host, uint16_t http_port, uint16_t ws_port,
               uint32_t baud, uint64_t update_epsilion, uint8_t flags) {
   if (!mapper.LoadMappings(cfg_file)) std::cerr << "[Core:Warning] Encountered some error while loading mappings from config file\n";
 
@@ -69,10 +69,11 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
   auto& parsed_mappings = mapper.GetMappings();
   http.RegisterDatastreams(parsed_mappings);
 
-  http.StartAsync(http_port);
+  http.StartAsync(http_port, host);
   socket.Start(ws_port);
 
   uint8_t buffer[14 * 32]{0};
+  uint64_t spoof_val = 12000;
 
   uint64_t t_mount = Utils::PreciseTime<int64_t, Utils::t_us>();
   while (true) {
@@ -85,10 +86,12 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, uint1
     if (flags & SPOOF_SERIAL) {
       // this code is junk re. ptr handling
       for (auto iter = parsed_mappings.begin(); iter != parsed_mappings.end() && read < sizeof(buffer); iter++) {
+        int64_t spoof_local = spoof_val + (rand() % 2000) - 1000;
         buffer[read++] = 0xf5;
         std::reverse_copy((uint8_t*)&iter->first, (uint8_t*)&iter->first + sizeof(iter->first), buffer + read);
-        for (uint8_t i = 0; i < 8; i++) buffer[read + 5 + i] = rand() % 0xFF;  // fucking slow
-        read += 13;
+        std::memcpy(buffer+read+4, (void*)(&spoof_local), 8);
+        std::reverse(buffer+read+4, buffer+read+4+7);
+        read += 12;
         buffer[read++] = 0xae;
       }
     } else {
@@ -224,7 +227,11 @@ int main(int argc, char** argv) {
       .default_value("assets")
       .help("The directory of the assets to serve");
 
-  program.add_argument("", "--verbose-all")
+  program.add_argument("-l", "--localhost")
+      .flag()
+      .help("Run in localhost mode");
+
+  program.add_argument("--verbose-all")
       .flag()
       .help("Enable all verbose logging");
 
@@ -291,6 +298,8 @@ int main(int argc, char** argv) {
   if (program["--spoof-serial"] == true) flags |= SPOOF_SERIAL;
   if (program["--stateless-ws"] == false) flags |= STATEFULL_WS;
 
+
+  std::string host = (program["--localhost"] == true) ? "localhost" : "0.0.0.0";
   Core core{assets_dir};
 
 // Grab the TermHandler and bind it using sigaction
@@ -306,7 +315,7 @@ int main(int argc, char** argv) {
 #endif
 
   // Run telemetry with com port and config file
-  core.Run(serial_port, cfg_file, http_port, ws_port, baud, update_epsilion, flags);
+  core.Run(serial_port, cfg_file, host, http_port, ws_port, baud, update_epsilion, flags);
 
   return 0;
 }

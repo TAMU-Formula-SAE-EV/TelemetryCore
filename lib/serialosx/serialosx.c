@@ -1,5 +1,7 @@
 #include "serialosx.h"
 
+#ifdef __APPLE__
+
 int serialosx_open(const char* port_path, int baud_rate) {
     int fd = open(port_path, O_RDWR | O_NOCTTY | O_NDELAY);
     if (fd == -1) {
@@ -35,3 +37,6 @@ int serialosx_read(int fd, unsigned char* buffer, int buffer_size)
 }
 
 void serialosx_close(int fd) { close(fd); }
+
+
+#endif
