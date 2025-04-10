@@ -14,7 +14,7 @@ class HTTPHandle {
     httplib::Server server{};
     std::thread* thread;
     uint16_t port{0};
-
+    std::string host;
     std::string datastreams;
 
 public:
@@ -31,10 +31,11 @@ public:
         });
     }
 
-    inline void StartAsync(uint16_t port) 
+    inline void StartAsync(uint16_t port, const std::string& host) 
     {
         this->port = port;
-        thread = new std::thread([&]() { server.listen("localhost", this->port); }); 
+        this->host = host;
+        thread = new std::thread([&]() { server.listen(this->host, this->port); }); 
     }
 
     inline ~HTTPHandle() {
@@ -59,7 +60,7 @@ public:
 
 void TestHTTPHandle() {
     HTTPHandle handle{"assets"};
-    handle.StartAsync(9000);
+    handle.StartAsync(9000, "0.0.0.0");
 
     for (int i = 0; true; i++) {
         if (i > 1000) {
