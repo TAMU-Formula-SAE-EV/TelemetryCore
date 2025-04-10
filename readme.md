@@ -5,7 +5,8 @@ Part of Texas A&M Formula SAE Telemetry Network.
 TelemetryCore is a fast telemetry proxy used to bridge information from the car's network to the base station.
 
 <!--![readthedocs](readthedocs.jpg)-->
-<img src="readthedocs.jpg" width="400px">
+<!-- <img src="readthedocs.jpg" width="400px"> -->
+![structure](pics/structure.jpg)
 
 <!--Questions: contact Justus <jus@justusl.com>-->
 
