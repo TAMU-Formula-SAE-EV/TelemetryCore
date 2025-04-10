@@ -13,8 +13,6 @@ TelemetryCore is a fast telemetry proxy used to bridge information from the car'
 
 Assuming you have `telemtrycore.exe` installed at some path in your system, here is you can get started using the service.
 
-
-
 The first step is to ensure that we have the important resources:
 
 1. We need the binary somewhere in the filesystem, for ex. `/path/to/telemetrycore.exe`.
@@ -25,6 +23,9 @@ The first step is to ensure that we have the important resources:
 
 Lets review the important arguments that are required to run the service:
 
-* `-c` specify the config file path, this is required.
-* `-a` specify the assets directory path, default is `assets` (means `${PWD}/assets`, if you don't understand this google it).
-* '-s' 
+* `-s` specify the serial port, this is required.
+* `-c` specify the config file path, this is also required.
+* `-a` specify the assets directory path, default is `assets` (means `${PWD}/assets`, if you don't understand this google it), but this should probably be required.
+
+There are other important arguments, so run `/path/to/telemtrycore.exe -h` to view them.
+
