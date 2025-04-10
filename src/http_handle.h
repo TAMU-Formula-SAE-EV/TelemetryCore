@@ -1,15 +1,20 @@
-#ifndef _HTTP_HANDLE_H_ 
-#define _HTTP_HANDLE_H_ 
+#ifndef _HTTP_HANDLE_H_
+#define _HTTP_HANDLE_H_
 
-#include <thread>
 #include <iostream>
-#include <string>
 #include <map>
+#include <string>
+#include <thread>
 
 #include "../lib/httplib/httplib.h"
 
 #include "packet_mapper.h"
 
+// 
+// HTTPHandle is the object which encapsulates HTTP communication 
+// with the client. The server runs in an alternative thread. 
+// It servers the assets directory + various endpoints (/datasreams).
+// 
 class HTTPHandle {
     httplib::Server server{};
     std::thread* thread;
@@ -18,7 +23,11 @@ class HTTPHandle {
     std::string datastreams;
 
 public:
-    inline HTTPHandle(const std::string& assets_dir) {
+    // 
+    // Construct the object given the assets directory to serve.
+    // 
+    inline HTTPHandle(const std::string& assets_dir)
+    {
         server.set_base_dir(assets_dir);
 
         server.Get("/datastreams", [&](const httplib::Request& req, httplib::Response& res) {
@@ -31,14 +40,22 @@ public:
         });
     }
 
-    inline void StartAsync(uint16_t port, const std::string& host) 
+    // 
+    // Start the server on an alternative thread.
+    // 
+    inline void StartAsync(uint16_t port, const std::string& host)
     {
-        this->port = port;
-        this->host = host;
-        thread = new std::thread([&]() { server.listen(this->host, this->port); }); 
+        this->port = port;  // I dont think there is any need to save these to state
+        this->host = host;  // but it doesnt hurt to.
+        thread = new std::thread([&]() { server.listen(this->host, this->port); });
     }
 
-    inline ~HTTPHandle() {
+    // 
+    // On destructor stop the server and clean up the threading
+    // resources, follows RAII
+    // 
+    inline ~HTTPHandle()
+    {
         server.stop();
         if (thread != nullptr) {
             thread->join();
@@ -46,19 +63,33 @@ public:
         }
     }
 
-    inline void RegisterDatastreams(std::map<uint32_t, std::vector<PacketMapping>>& mappings) {
+    // 
+    // Populates the information to be served over the /datastreams endpoint.
+    // Basically metadata about all the types of frames that could be sent
+    // over WebSockets. We populate this my looking through the packet mappings
+    // and constructing a JSON response.
+    // 
+    inline void RegisterDatastreams(std::map<uint32_t, std::vector<PacketMapping>>& mappings)
+    {
         datastreams = "{\"streams\": [";
         for (const auto& [key, value] : mappings) {
             for (const PacketMapping& mapping : value) {
-                datastreams += Utils::StrFmt("{\"name\": \"%s\", \"units\": \"%s\", \"short_name\": \"%s\"},", mapping.identifier, mapping.unit, mapping.identifier);
+                datastreams += Utils::StrFmt("{\"name\": \"%s\", \"units\": \"%s\", \"short_name\": \"%s\"},",
+                                             mapping.identifier, mapping.unit, mapping.identifier);
             }
         }
+        datastreams += Utils::StrFmt("{\"name\": \"%s\", \"units\": \"%s\", \"short_name\": \"%s\"},", "timestamp", "s",
+                                     "timestamp");
         datastreams.pop_back();
         datastreams += "]}";
     }
 };
 
-void TestHTTPHandle() {
+// 
+// Unit test for the HTTPHandle
+// 
+void TestHTTPHandle()
+{
     HTTPHandle handle{"assets"};
     handle.StartAsync(9000, "0.0.0.0");
 
@@ -69,6 +100,5 @@ void TestHTTPHandle() {
         }
     }
 }
-
 
 #endif
