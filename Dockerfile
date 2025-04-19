@@ -15,4 +15,6 @@ RUN make
 EXPOSE 9000
 EXPOSE 9001
 
-CMD ["./entrypoint.sh"]
+
+RUN chmod +x /app/entrypoint.sh
+CMD ["/app/entrypoint.sh"]
