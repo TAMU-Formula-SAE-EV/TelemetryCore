@@ -3,6 +3,7 @@ cd test
 python3 ./simulate_serial.py &
 
 cd ..
+sleep 3
 
 while [ true ]
 do
