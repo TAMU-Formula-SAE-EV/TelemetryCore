@@ -1,4 +1,4 @@
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__linux__)
 
 #include <stdio.h>
 #include <termios.h>

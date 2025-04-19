@@ -28,7 +28,7 @@
 /* Last revision: January 14, 2023 */
 /* For more info and how to use this library, visit: https://www.teuniz.net/RS-232/ */
 
-
+#define _GNU_SOURCE
 #include "rs232.h"
 
 #if defined(__linux__) || defined(__FreeBSD__)  || defined(__APPLE__) /* Linux & FreeBSD & Mac */

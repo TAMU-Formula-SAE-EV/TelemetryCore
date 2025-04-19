@@ -6,22 +6,22 @@
     const std::string result = oss.str();
 
     for (auto it = connections.begin(); it != connections.end(); ++it) {
-        server.send(*it, result, websocketpp::frame::opcode::text);
+        ws_server.send(*it, result, websocketpp::frame::opcode::text);
     }
 }
 
 void SocketManager::Start(uint16_t port) {
-    server.init_asio();
-    server.clear_access_channels(websocketpp::log::alevel::all);
-    server.clear_error_channels(websocketpp::log::elevel::all);
-    server.set_reuse_addr(true);
+    ws_server.init_asio();
+    ws_server.clear_access_channels(websocketpp::log::alevel::all);
+    ws_server.clear_error_channels(websocketpp::log::elevel::all);
+    ws_server.set_reuse_addr(true);
 
-    server.set_open_handler(bind(&SocketManager::OnConnOpen, this,::_1));
-    server.set_close_handler(bind(&SocketManager::OnConnClose, this,::_1));
-    server.set_message_handler(bind(&SocketManager::OnRecvMessage, this, ::_1, ::_2));
+    ws_server.set_open_handler(bind(&SocketManager::OnConnOpen, this,::_1));
+    ws_server.set_close_handler(bind(&SocketManager::OnConnClose, this,::_1));
+    ws_server.set_message_handler(bind(&SocketManager::OnRecvMessage, this, ::_1, ::_2));
 
-    server.listen(port);
-    server.start_accept();
+    ws_server.listen(port);
+    ws_server.start_accept();
     server_thread = std::thread(&SocketManager::Run, this);
 }
 

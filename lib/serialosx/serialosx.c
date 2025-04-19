@@ -1,6 +1,8 @@
+
+#define _GNU_SOURCE
 #include "serialosx.h"
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__linux__)
 
 int serialosx_open(const char* port_path, int baud_rate) {
     int fd = open(port_path, O_RDWR | O_NOCTTY | O_NDELAY);

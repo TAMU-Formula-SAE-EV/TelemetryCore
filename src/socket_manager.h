@@ -27,7 +27,7 @@ using websocketpp::lib::placeholders::_2;
 class SocketManager {
     typedef std::set<connection_hdl, std::owner_less<connection_hdl>> con_list;
 
-    server server;
+    server ws_server;
     con_list connections;
     std::thread server_thread;
 
@@ -46,7 +46,7 @@ public:
 
     inline void Run()
     {
-        server.run();
+        ws_server.run();
     }
     void TransmitUpdatedFrame(MappedPacket& update);
     void Start(uint16_t port);

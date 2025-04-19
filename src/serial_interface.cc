@@ -1,6 +1,8 @@
 #include "serial_interface.h"
 
-#if defined(__APPLE__) // function definitions for apple
+#if defined(__APPLE__) || defined(__linux__) // function definitions for apple
+
+#include "../lib/serialosx/serialosx.h"
 
 bool SerialInterface::Connect(const std::string& port_name, int baudrate)
 {

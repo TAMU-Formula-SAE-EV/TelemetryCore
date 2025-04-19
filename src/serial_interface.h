@@ -1,6 +1,8 @@
 #ifndef _SERIAL_STREAMER_
 #define _SERIAL_STREAMER_
 
+#include <cstdint>
+
 #include <iostream>
 
 #if defined(_WIN32)
@@ -17,7 +19,7 @@ class SerialInterface {
 // instance memory needed:
 //  on mac: the file descriptor (fd)
 //  on win: the com port number (cport_nr)
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(__linux__)
     int fd;
 #elif defined(_WIN32)
     int cport_nr;
