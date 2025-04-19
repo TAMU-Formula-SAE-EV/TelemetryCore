@@ -9,8 +9,6 @@ master, slave = pty.openpty()
 s_name = os.ttyname(slave)
 print("Data streaming to:", s_name)
 
-input("Press Enter to continue...")
-
 def bitstring_to_bytes(s):
     return int(s, 2).to_bytes((len(s) + 7) // 8, byteorder='big')
 
