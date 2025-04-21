@@ -32,7 +32,7 @@ public:
 
         server.Get("/datastreams", [&](const httplib::Request& req, httplib::Response& res) {
             res.set_header("Content-Type", "application/json");
-            res.set_header("Access-Control-Allow-Origin", "*");
+            res.set_header("Access-Control-Allow-Origin", "http://localhost:3000");
             res.set_header("Access-Control-Allow-Headers", "*");
             res.set_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
             res.set_header("Access-Control-Max-Age", "86400");
