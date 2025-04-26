@@ -78,7 +78,6 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, const
     socket.Start(ws_port);
 
     uint8_t buffer[14 * 32]{0};
-    uint64_t spoof_val = 12000;
 
     uint64_t t_mount = Utils::PreciseTime<int64_t, Utils::t_us>() - global_start_time_us;
     while (true) {
@@ -91,10 +90,13 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, const
         if (flags & SPOOF_SERIAL) {
             // this code is junk re. ptr handling
             for (auto iter = parsed_mappings.begin(); iter != parsed_mappings.end() && read < sizeof(buffer); iter++) {
-                int64_t spoof_local = spoof_val + (rand() % 2000) - 1000;
                 buffer[read++] = 0xf5;
                 std::reverse_copy((uint8_t*)&iter->first, (uint8_t*)&iter->first + sizeof(iter->first), buffer + read);
-                std::memcpy(buffer + read + 4, (void*)(&spoof_local), 8);
+		for (uint8_t* b = buffer + read + 4, i = 0; i < 8; i++)
+		{
+			b[i] = rand() % 0xFF;
+		}
+
                 std::reverse(buffer + read + 4, buffer + read + 4 + 7);
                 read += 12;
                 buffer[read++] = 0xae;
@@ -122,13 +124,19 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, const
 
         if (flags & STATEFULL_WS) {
             for (auto& mapped_packet : updated) {
-                if (flags & VERBOSE_WS) { mapped_packet.Stream(std::cout); }
+                if (flags & VERBOSE_WS) { 
+			mapped_packet.Stream(std::cout); 
+			std::cout << "\n";
+		}
                 socket.TransmitUpdatedFrame(mapped_packet);
             }
         }
         else {
             for (auto& [_, mapped_packet] : mapper.values) {
-                if (flags & VERBOSE_WS) { mapped_packet.Stream(std::cout); }
+                if (flags & VERBOSE_WS) { 
+			mapped_packet.Stream(std::cout); 
+			std::cout << "\n";
+		}
                 socket.TransmitUpdatedFrame(mapped_packet);
             }
         }

@@ -95,7 +95,8 @@ bool PacketMapper::ExpectIdentifier(fileiter& it, fileiter end, std::string& ide
     if (!between(*it, 'a', 'z') && !between(*it, 'A', 'Z')) return Unexpected("a-z or A-Z", *it);
     identifier += *it++;
     while (it != end) {
-        if (between(*it, 'a', 'z') || between(*it, 'A', 'Z') || *it == '_') identifier += *it++;
+        if (between(*it, 'a', 'z') || between(*it, 'A', 'Z') || *it == '_' 
+			|| between(*it, '0', '9')) identifier += *it++;
         else {
             if (is_whitespace(*it)) IterWS(it);
             return true;
@@ -201,14 +202,17 @@ void PacketMapper::MapPacket(const CANPacket& packet, std::vector<MappedPacket>&
         int64_t extracted = 0;
         int width = mapping.end - mapping.start;
         for (int i = mapping.start, j = 0; i <= mapping.end; i++) {
-            // extracted |= packet.data[i] << (8 * (j++)); // some endian configuration
+            //extracted |= packet.data[i] << (8 * (j++)); // some endian configuration
             extracted |= packet.data[i] << (8 * (width - (j++))); // other endian configuration
         }
+	if (mapping.negable && ((int8_t)packet.data[mapping.start] < 0)) extracted = -extracted;
         double adjusted = extracted / (double)mapping.coef;
-        auto mp = MappedPacket(mapping.identifier, adjusted, packet.timestamp);
-        // https://stackoverflow.com/a/73372990/11337553
-        values.insert_or_assign(mapping.identifier, mp);
-        vec.push_back(mp);
+	//if (!std::isfinite(adjusted)) adjusted = 0;
+	//std::cout << packet.id << " " << adjusted << " " << mapping.identifier << "\n";
+	auto mp = MappedPacket(mapping.identifier, adjusted, packet.timestamp);
+	// https://stackoverflow.com/a/73372990/11337553
+	values.insert_or_assign(mapping.identifier, mp);
+	vec.push_back(mp);
     }
 }
 

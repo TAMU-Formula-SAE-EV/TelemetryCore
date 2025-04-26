@@ -40,7 +40,7 @@ endif
 
 INC_FLAGS := $(addprefix -I,$(INC_DIRS)) 
 
-CFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c$(C_V) -g -O3 -Wno-format-security -Wall -Wextra -pedantic-errors -Weffc++ -Wno-unused-parameter
+CFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c$(C_V) -g  -Wno-format-security -Wall -Wextra -pedantic-errors -Weffc++ -Wno-unused-parameter
 # Adding _WEBSOCKETPP_MINGW_THREAD_ to the CFLAGS to make it deffined in the build and make windows stick with it 
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c++$(CPP_V) -g -O3 -Wno-format-security -Wall -Wextra -pedantic-errors -Weffc++ -Wno-unused-parameter -D_WEBSOCKETPP_CPP11_THREAD_
 CXXFLAGS += -Wno-effc++ -Wno-template-id-cdtor #only show errors and remove warnings for now, delete when done

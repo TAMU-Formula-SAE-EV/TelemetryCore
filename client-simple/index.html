@@ -6,9 +6,34 @@
 
     <script defer>
 
+	function httpGetAsync(theUrl, callback)
+	{
+	    	var xmlHttp = new XMLHttpRequest();
+		xmlHttp.onreadystatechange = function() { 
+			if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+		    	callback(xmlHttp.responseText);
+		}
+		xmlHttp.open("GET", theUrl, true);
+		xmlHttp.send(null);
+	}
+
+	var units = {}
+
+	setTimeout(() => {
+		httpGetAsync("/datastreams", (text) => {
+			var obj = JSON.parse(text);
+			var streams = obj["streams"];
+			for (var i = 0; i < streams.length; i++) {
+				var name = streams[i]["name"];
+				var unit = streams[i]["units"];
+				units[name] = unit;
+			}
+		});
+	}, 10);
+
         const entries = {};
 
-        const socket = new WebSocket('ws://localhost:9001/');
+        const socket = new WebSocket('ws://' + window.location.host + ':9001/');
 
         socket.addEventListener('open', function(event) {
             console.log('Connected to server');
@@ -30,7 +55,9 @@
         setInterval(() => { 
             $('#entries').empty();
             for (const [key, [value, timestamp]] of Object.entries(entries)) {
-                $('#entries').append(`<tr><td>${key}</td><td>${value}</td><td>${timestamp}</td></tr>`);
+	   	var unit = units[key];
+		if (unit == undefined) unit = "n/a";
+		$('#entries').append(`<tr><td>${key}</td><td>${value}</td><td>${unit}</td><td>${timestamp}</td></tr>`);
             }
         }, 50);
 
@@ -78,6 +105,7 @@
         <tr>
             <th>Key</th>
             <th>Value</th>
+            <th>Unit</th>
             <th>Timestamp</th>
         </tr>
         <tbody id="entries">
