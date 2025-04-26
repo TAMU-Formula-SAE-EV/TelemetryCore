@@ -25,22 +25,10 @@ CFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c$(C_V) -g -Wno-format-security -Wall -Wext
 # Adding _WEBSOCKETPP_MINGW_THREAD_ to the CFLAGS to make it deffined in the build and make windows stick with it 
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c++$(CPP_V) -g -Wno-format-security -Wall -Wextra -pedantic-errors -Weffc++ -Wno-unused-parameter -D_WEBSOCKETPP_CPP11_THREAD_
 CXXFLAGS += -Wno-effc++ -Wno-template-id-cdtor #only show errors and remove warnings for now, delete when done
-ifeq ($(UNAME),MINGW64_NT-10.0-19043)
-LDFLAGS ?= -L/c/MinGW/msys/1.0/lib/libdl.a
-else
-ifeq ($(UNAME),MINGW32_NT-6.2)
-LDFLAGS ?= -L/lib/libdl.a
-else
-LDFLAGS ?= -ldl 
 
-endif
-endif
 
-ifeq ($(OS),Windows_NT)
-    LDFLAGS := -lws2_32 -lmswsock # taking out ldl and adding winsock2 library
-else
-    LDFLAGS := -ldl
-endif
+
+LDFLAGS := -ldl
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS) 
@@ -48,19 +36,16 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 # assembly
 $(BUILD_DIR)/%.s.o: %.s
 	$(MKDIR_P) $(dir $@)
-#-$(MKDIR_P) $(subst /,\,$(dir $@))
 	$(AS) $(ASFLAGS) -c $< -o $@
 
 # c source
 $(BUILD_DIR)/%.c.o: %.c
 	$(MKDIR_P) $(dir $@)
-#-$(MKDIR_P) $(subst /,\,$(dir $@))
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # c++ source
 $(BUILD_DIR)/%.cc.o: %.cc
 	$(MKDIR_P) $(dir $@)
-#-$(MKDIR_P) $(subst /,\,$(dir $@))
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: clean
@@ -71,4 +56,3 @@ clean:
 
 -include $(DEPS)
 
-#MKDIR_P ?= mkdir -p
