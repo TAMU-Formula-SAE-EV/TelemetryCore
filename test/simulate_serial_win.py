@@ -14,7 +14,7 @@ def hex_id(s):
 DELIM_BEGIN = b'\xf5'
 DELIM_END = b'\xae'
 
-ser = serial.Serial('COM10', baudrate=115200, timeout=1)
+ser = serial.Serial('COM10', baudrate=3000000, timeout=1)
 print("Data streaming to", ser.port)
 
 counter = 0

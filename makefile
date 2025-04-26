@@ -1,10 +1,5 @@
-#UNAME := $(shell uname)
-
-ifeq ($(OS),Windows_NT) #making sure that you can make the files properly on windowsgit
 MKDIR_P = cmd.exe /c mkdir
-else
-MKDIR_P = mkdir -p
-endif
+
 
 TARGET_EXEC ?= telemetrycore 
 
@@ -14,23 +9,18 @@ SRC_DIRS ?= ./src ./lib
 C_V ?= 17
 CPP_V ?= 17
 
-ifeq ($(OS),Windows_NT)
+
 # Exclude serial osx 		note: can't we just wrap serialosx header in an ifdef __APPLE__? -jus
 SRCS := $(shell find $(SRC_DIRS) -type f \( -name "*.cc" -or -name "*.c" -or -name "*.s" \) ! -path "*/lib/serialosx/*")
-else
-SRCS := $(shell find $(SRC_DIRS) -name *.cc -or -name *.c -or -name *.s)
-endif
+
 
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
-ifeq ($(OS),Windows_NT)
-INC_DIRS := $(SRC_DIRS) $(shell powershell -Command "Get-ChildItem -Path ./lib -Recurse -Directory | Select-Object -ExpandProperty FullName")
-	# Define the include directories (INC_DIRS) by searching for all subdirectories within the specified source directories.
 
-else
-INC_DIRS := $(shell find $(SRC_DIRS) -type d)
-endif
+INC_DIRS := $(SRC_DIRS) $(shell powershell -Command "Get-ChildItem -Path ./lib -Recurse -Directory | Select-Object -ExpandProperty FullName")
+# Define the include directories (INC_DIRS) by searching for all subdirectories within the specified source directories.
+
 
 INC_FLAGS := $(addprefix -I,$(INC_DIRS)) 
 
@@ -38,22 +28,11 @@ CFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c$(C_V) -g -O3 -Wno-format-security -Wall -
 # Adding _WEBSOCKETPP_MINGW_THREAD_ to the CFLAGS to make it deffined in the build and make windows stick with it 
 CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c++$(CPP_V) -g -O3 -Wno-format-security -Wall -Wextra -pedantic-errors -Weffc++ -Wno-unused-parameter -D_WEBSOCKETPP_CPP11_THREAD_
 CXXFLAGS += -Wno-effc++ -Wno-template-id-cdtor #only show errors and remove warnings for now, delete when done
-#ifeq ($(UNAME),MINGW64_NT-10.0-19043)
-	#LDFALGS ?= -L/c/MinGW/msys/1.0/lib/libdl.a
-#else
-#ifeq ($(UNAME),MINGW32_NT-6.2)
-	#LDFLAGS ?= -L/lib/libdl.a
-#else
-#LDFLAGS ?= -ldl 
 
-#endif
-#endif
 
-ifeq ($(OS),Windows_NT)
-    LDFLAGS := -lws2_32 -lmswsock # taking out ldl and adding winsock2 library
-else
-    LDFLAGS := -ldl
-endif
+
+LDFLAGS := -lws2_32 -lmswsock # taking out ldl and adding winsock2 library
+
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS) 
@@ -78,17 +57,9 @@ $(BUILD_DIR)/%.cc.o: %.cc
 
 .PHONY: clean
 
-#clean:
-	#$(RM) -r $(BUILD_DIR)
 
-ifeq ($(OS),Windows_NT)
 clean:
-		cmd.exe /c if exist $(subst /,\,$(BUILD_DIR)) rmdir /s /q $(subst /,\,$(BUILD_DIR))
-else
-clean:	
-		$(RM) -r $(BUILD_DIR)
-endif
+	cmd.exe /c if exist $(subst /,\,$(BUILD_DIR)) rmdir /s /q $(subst /,\,$(BUILD_DIR))
+
 
 -include $(DEPS)
-
-#MKDIR_P ?= mkdir -p
