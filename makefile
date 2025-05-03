@@ -56,7 +56,8 @@ CXXFLAGS += -Wno-effc++ -Wno-template-id-cdtor #only show errors and remove warn
 #endif
 
 ifeq ($(OS),Windows_NT)
-    LDFLAGS := -lws2_32 -lmswsock # taking out ldl and adding winsock2 library
+    LDFLAGS := -lws2_32 -lmswsock -Llib -lftd2xx
+	# taking out ldl and adding winsock2 library
 else
     LDFLAGS := -ldl
 endif

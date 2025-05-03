@@ -30,3 +30,10 @@ Lets review the important arguments that are required to run the service:
 
 There are other important arguments, so run `/path/to/telemtrycore.exe -h` to view them.
 
+## FTDI Driver
+
+You need to install the FTDI Driver for Windows builds. We no longer use serial (some of the legacy code still references it).
+
+The following libraries must also be in the project:
+* lib/ftd2xx.lib 
+* bin/ftd2xx.dll
