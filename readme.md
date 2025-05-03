@@ -34,6 +34,9 @@ There are other important arguments, so run `/path/to/telemtrycore.exe -h` to vi
 
 You need to install the FTDI Driver for Windows builds. We no longer use serial (some of the legacy code still references it).
 
-The following libraries must also be in the project:
-* lib/ftd2xx.lib 
-* bin/ftd2xx.dll
+The following libraries for your architecture must be in these locations in the project:
+
+* `lib/ftd2xx.lib`  static linked library
+* `bin/ftd2xx.dll`  dynamic linked library
+
+File candidates are in the `ftdi` directory. 
