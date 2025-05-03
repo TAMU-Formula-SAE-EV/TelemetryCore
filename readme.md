@@ -36,7 +36,11 @@ You need to install the FTDI Driver for Windows builds. We no longer use serial 
 
 The following libraries for your architecture must be in these locations in the project:
 
-* `lib/ftd2xx.lib`  static linked library
+* `lib/ftd2xx.lib`  static linked library, you can try:
+  * arm: `cp ftdi/arm/ftd2xx.lib lib/ftd2xx.lib`
+  * x64: `cp ftdi/x64/ftd2xx.lib lib/ftd2xx.lib`
 * `bin/ftd2xx.dll`  dynamic linked library
+  * arm: `cp ftdi/arm/ftd2xx.dll bin/ftd2xx.dll`
+  * x64: `cp ftdi/x64/ftd2xx.dll bin/ftd2xx.dll`
 
 File candidates are in the `ftdi` directory. 
