@@ -21,9 +21,14 @@ using websocketpp::lib::bind;
 using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
 
-// For future reference:
-// https://github.com/zaphoyd/websocketpp/blob/master/examples/broadcast_server/broadcast_server.cpp
 
+//
+// Maintains the websocket connection and provides the 
+// service to stream packets over the network.
+// 
+// Future reference:
+// https://github.com/zaphoyd/websocketpp/blob/master/examples/broadcast_server/broadcast_server.cpp
+//
 class SocketManager {
     typedef std::set<connection_hdl, std::owner_less<connection_hdl>> con_list;
 
@@ -46,7 +51,15 @@ public:
 
     inline void Run()
     {
-        server.run();
+        while (true)
+        {
+            try {
+                server.run();
+            } catch (const std::runtime_error& e)
+            {
+                std::cout << "[SocketManager] caught exception " << e.what() << "\n";
+            }
+        }
     }
     void TransmitUpdatedFrame(MappedPacket& update);
     void Start(uint16_t port);
