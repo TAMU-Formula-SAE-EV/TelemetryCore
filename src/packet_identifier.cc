@@ -67,7 +67,7 @@ std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t
         uint8_t* start = p;
         if (*(p++) == DELIM_BEGIN) {
             for (int i = 0; i <= 24 && p < end; i += 8) {
-                current.id |= *(p++) << (24-i); // '24-' is used to hot swap endian       @endianswitch
+                current.id |= *(p++) << (i); // '24-' is used to hot swap endian       @endianswitch
             }
             for (int i = 0; i < 8 && p < end; i++) { current.data[i] = *(p++); }
             // printf("p = %x end = %x\n", p, end);

@@ -77,7 +77,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, const
     http.StartAsync(http_port, host);
     socket.Start(ws_port);
 
-    uint8_t buffer[14 * 32]{0};
+    uint8_t buffer[14 * 256]{0};
 
     uint64_t t_mount = Utils::PreciseTime<int64_t, Utils::t_us>() - global_start_time_us;
     while (true) {
