@@ -4,7 +4,8 @@
 #include <iostream>
 
 #if defined(_WIN32)
-#include "../lib/rs232/rs232.h"
+//#include "../lib/rs232/rs232.h"
+#include "../lib/ftdi/ftdi_serial.h"
 #elif defined(__APPLE__)
 #include "../lib/serialosx/serialosx.h"
 #endif
@@ -20,7 +21,7 @@ class SerialInterface {
 #if defined(__APPLE__)
     int fd;
 #elif defined(_WIN32)
-    int cport_nr;
+    FTDISerial hftdi{};
 #endif
 
 public:

@@ -32,6 +32,15 @@
 // typedef for better ergonomics
 typedef void (*sig_handler_t)(int);
 
+std::string bitsof(uint8_t c)
+{
+    std::string binary = "";
+    for (int i = 7; i >= 0; --i) {
+        binary += ((c >> i) & 1) ? '1' : '0';
+    }
+    return binary;
+}
+
 // collect all the subsystems, organize in convinient
 // memory base
 struct Core {
@@ -117,7 +126,11 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, const
 
         if (flags & VERBOSE_RECV) {
             printf("\nreceived %d bytes:\n", read);
-            for (int i = 0; i < read; i++) printf("%02x, ", buffer[i]);
+            for (int i = 0; i < read; i++) 
+	    {
+		    printf("%02x (", buffer[i]);
+		    std::cout << bitsof(buffer[i]) << "), ";
+	    }
             printf("\n\nparsed into %d frames:\n", detected.size());
             for (CANPacket& packet : detected) { std::cout << packet.Str() << "\n"; }
         }
