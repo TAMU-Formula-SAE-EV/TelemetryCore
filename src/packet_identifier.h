@@ -56,6 +56,8 @@ class PacketIdentifier {
     size_t leftover_size;
     uint8_t leftover[13];
 
+    std::vector<CANPacket> IdentifyPacketsInternal(uint8_t* buffer, size_t size, uint32_t global_start_time);
+
 public:
     PacketIdentifier() : leftover_size(0)
     {

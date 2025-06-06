@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <chrono>
+#include <thread>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -83,7 +85,10 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, const
     while (true) {
         // super-fast scheduler
         uint64_t t_now = Utils::PreciseTime<int64_t, Utils::t_us>() - global_start_time_us;
-        if (t_now - t_mount < update_epsilion) continue; // use an epsilon oops
+        if (t_now - t_mount < update_epsilion) {
+            std::this_thread::sleep_for(std::chrono::microseconds(50));
+            continue; // use an epsilon oops
+        }
         t_mount = t_now;
 
         size_t read = 0;
@@ -108,7 +113,7 @@ int Core::Run(const std::string& serial_port, const std::string& cfg_file, const
         if (read <= 0) continue;
 
         // TODO: make this pass by reference
-        std::vector<CANPacket> detected = identifier.IdentifyPackets(buffer, sizeof(buffer), global_start_time_ms);
+        std::vector<CANPacket> detected = identifier.IdentifyPackets(buffer, read, global_start_time_ms);
 
         if (flags & VERBOSE_RECV) {
             printf("\nreceived %d bytes:\n", read);
@@ -162,7 +167,7 @@ sig_handler_t Core::TermHandler(void)
     return [](int sig) {
         printf("\n\n[Core:Fatal] process ended on signal = %d\n", sig);
 
-        std::cout << "\nend state:\n";
+        std::cout << "\nend state - \n";
         // mapper.PrintState();
         exit(1);
     };

@@ -36,7 +36,7 @@ std::string CANPacket::Str()
     return d + " }";
 }
 
-// #define HANDLE_LEFTOVER
+#define HANDLE_LEFTOVER
 
 // 
 // Given a buffer of bytes from the serial network + the number of bytes,
@@ -53,12 +53,21 @@ std::vector<CANPacket> PacketIdentifier::IdentifyPackets(uint8_t* buffer, size_t
         std::copy(buffer, buffer + size, bigger_buf + leftover_size);
         // for (int i = 0; i < new_size; i++) printf("%2x ", bigger_buf[i]);
         // std::cout << "\n";
-        buffer = bigger_buf;
-        size = new_size;
+        
+        // process with combined buffer
+        std::vector<CANPacket> packets = IdentifyPacketsInternal(bigger_buf, new_size, global_start_time);
+        delete[] bigger_buf;
+        leftover_size = 0;
+        return packets;
 #endif
         leftover_size = 0;
     }
+    
+    return IdentifyPacketsInternal(buffer, size, global_start_time);
+}
 
+std::vector<CANPacket> PacketIdentifier::IdentifyPacketsInternal(uint8_t* buffer, size_t size, uint32_t global_start_time)
+{
     std::vector<CANPacket> packets{};
     CANPacket current{};
     // uint8_t* start = nullptr;

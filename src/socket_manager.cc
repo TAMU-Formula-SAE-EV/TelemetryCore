@@ -5,8 +5,13 @@
     update.Stream(oss);     // this is maybe slow?
     const std::string result = oss.str();
 
+    std::lock_guard<std::mutex> lock(connections_mutex);
     for (auto it = connections.begin(); it != connections.end(); ++it) {
-        server.send(*it, result, websocketpp::frame::opcode::text);
+        try {
+            server.send(*it, result, websocketpp::frame::opcode::text);
+        } catch (const std::exception& e) {
+            // silently ignore send errors (connection might be closing)
+        }
     }
 }
 

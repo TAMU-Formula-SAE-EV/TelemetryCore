@@ -7,6 +7,7 @@
 #include <set>
 #include <thread>
 #include <vector>
+#include <mutex>
 
 #define ASIO_STANDALONE
 #include "../lib/websocket/websocketpp/config/asio_no_tls.hpp"
@@ -34,15 +35,18 @@ class SocketManager {
 
     server server;
     con_list connections;
+    std::mutex connections_mutex;
     std::thread server_thread;
 
 public:
     inline void OnConnOpen(connection_hdl hdl)
     {
+        std::lock_guard<std::mutex> lock(connections_mutex);
         connections.insert(hdl);
     }
     inline void OnConnClose(connection_hdl hdl)
     {
+        std::lock_guard<std::mutex> lock(connections_mutex);
         connections.erase(hdl);
     }
     inline void OnRecvMessage(connection_hdl hdl, server::message_ptr msg)

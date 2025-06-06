@@ -66,20 +66,20 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 
 # assembly
 $(BUILD_DIR)/%.s.o: %.s
-	#$(MKDIR_P) $(dir $@)
-	-$(MKDIR_P) $(subst /,\,$(dir $@))
+	$(MKDIR_P) $(dir $@)
+	#-$(MKDIR_P) $(subst /,\,$(dir $@))
 	$(AS) $(ASFLAGS) -c $< -o $@
 
 # c source
 $(BUILD_DIR)/%.c.o: %.c
-	#$(MKDIR_P) $(dir $@)
-	-$(MKDIR_P) $(subst /,\,$(dir $@))
+	$(MKDIR_P) $(dir $@)
+	#-$(MKDIR_P) $(subst /,\,$(dir $@))
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # c++ source
 $(BUILD_DIR)/%.cc.o: %.cc
-	#$(MKDIR_P) $(dir $@)
-	-$(MKDIR_P) $(subst /,\,$(dir $@))
+	$(MKDIR_P) $(dir $@)
+	# -$(MKDIR_P) $(subst /,\,$(dir $@))
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: clean
